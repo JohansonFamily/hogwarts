@@ -44,7 +44,8 @@ class Game:
 
 
     def startGame(self):
-        Label(self.root, text=self.players[1].name).grid(row=0)
+        for i in range(len(self.players)):
+            Label(self.root, text=self.players[i].name).grid(row=i)
         # What logic needs to happen here to ensure the game starts?  
 
-        # Call the ui subclass for the main board and the active player section        
+        # Call the ui subclass for the gui and the active player section
