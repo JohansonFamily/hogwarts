@@ -1,7 +1,6 @@
 from tkinter import *
-from PIL import ImageTk, Image
+from PIL import ImageTk
 #import cards
-import random
 
 live_heart = '\u2764'; dead_heart = '\u2661'; location_symbol = '\u2620'; empty_location = '\u25cf'; zip_zap = '\u26a1'; coin = '\U0001FA99'
 
@@ -127,7 +126,7 @@ class Board():
         '''
         
     def startEnter(e):
-        startGame()
+        e.startGame()
 
     def startGame(self):
         self.start_top.destroy()

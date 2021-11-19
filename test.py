@@ -1,12 +1,13 @@
 import tkinter as tk
 from tkinter import ttk
 
+
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
 
         # configure the root window
-        self.title('Hogwart\'s Battle')
+        self.title("Hogwart's Battle")
         self.geometry('1500x1000+100+100')
 
         # label
@@ -24,9 +25,6 @@ class App(tk.Tk):
 if __name__ == "__main__":
     app = App()
     app.mainloop()
-
-
-
 
 
 '''
@@ -49,13 +47,13 @@ if __name__ == "__main__":
 
 class Navbar(tk.Frame): ...
 class Toolbar(tk.Frame): ...
-class Statusbar(tk.Frame): ...
+class StatusBar(tk.Frame): ...
 class Main(tk.Frame): ...
 
 class MainApplication(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
-        self.statusbar = Statusbar(self, ...)
+        self.statusbar = StatusBar(self, ...)
         self.toolbar = Toolbar(self, ...)
         self.navbar = Navbar(self, ...)
         self.main = Main(self, ...)

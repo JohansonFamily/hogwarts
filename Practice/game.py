@@ -34,7 +34,6 @@ def startingScreen(root):
         bottom_frame.destroy()
 
         # Create Players
-        global players
         players = []
         
         for i in range(0,4):
