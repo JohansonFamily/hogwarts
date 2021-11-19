@@ -1,7 +1,6 @@
 from tkinter import *
 from PIL import ImageTk
 #import cards
-import game
 
 live_heart = '\u2764'; dead_heart = '\u2661'; location_symbol = '\u2620'; empty_location = '\u25cf'; zip_zap = '\u26a1'; coin = '\U0001FA99'
 
@@ -137,9 +136,7 @@ class Board():
         for i in reversed(range(len(self.players))):
             if self.arrayPlayerSelection[i].get()==0:
                 del self.players[i]
+        
 
-        print(self.gameOptions)
-        print(self.gameselection)
-        game.startGame(self.root, self.gameOptions, self.players)
 
     
