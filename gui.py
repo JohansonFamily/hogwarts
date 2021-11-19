@@ -146,7 +146,7 @@ class StartingScreen(ParentScreen):
             if self.arrayPlayerSelection[i].get() == 0:
                 del self.players[i]
 
-        game.startGame(self.root, self.players)
+        game.startGame(self.root, self.gameOptions[self.gameSelection.get()-1], self.players)
 
 
 class GameBoard(ParentScreen):

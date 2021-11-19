@@ -24,6 +24,6 @@ root.grid_rowconfigure(0, weight=1)
 root.grid_columnconfigure(0, weight=1)
 
 # Create a new game instance and start it.  Eventually, we can add loading a saved game or selecting the game here.
-game.createGame(root)
+game.selectGame(root)
 
 mainloop()
