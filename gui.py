@@ -159,24 +159,19 @@ class GameBoard(ParentScreen):
 
         super().__init__(root)
         self.locationFrame = Frame(self.parentFrame, width=400, height=300)
-        self.locationFrame.grid(row=0)
-        self.location = Location(self.locationFrame)
-
         self.darkArtsFrame = Frame(self.parentFrame, width=400, height=300)
-        self.darkArtsFrame.grid(row=0)
+
+        self.locationFrame.grid(row=0, column=0)
+        self.darkArtsFrame.grid(row=0, column=1)
+
+        self.location = Location(self.locationFrame)
         self.darkArts = DarkArts(self.darkArtsFrame)
 
-
-        # self.darkArts = DarkArtsFrame(self.parentFrame)
         # self.cardStore = CardStoreFrame(self.parentFrame)
         # self.villians = VillainFrame(self.parentFrame)
         # self.playersframe = PlayersFrame(self.parentFrame)
         # self.activeplayer = ActivePlayerFrame(self.parentFrame)
 
-        # self.darkArtsFrame = Frame(self.parentFrame, width=self.WIDTH/4, height=self.HEIGHT)
-        # self.cardStoreFrame = Frame(self.parentFrame, width=self.WIDTH/4, height=self.HEIGHT)
-        # self.villainFrame = Frame(self.parentFrame, width=self.WIDTH/4, height=self.HEIGHT)
-        # self.playerFrame = Frame(self.parentFrame, width=self.WIDTH/4, height=self.HEIGHT)
 
 class Location:
 
@@ -188,6 +183,7 @@ class Location:
         lf.grid(row=0, column=0)
         Label(lf, text="Hello harry").grid(row=0)
 
+
 class DarkArts:
 
     def __init__(self, frame):
@@ -195,9 +191,9 @@ class DarkArts:
 
     def loadContent(self):
 
-        lf = LabelFrame(self.frame, text="Cards")
-        lf.grid(row=0, column=0)
-        Label(lf, text="Goodbye Hermione!").grid(row=0)
+        lf2 = LabelFrame(self.frame, text="Cards")
+        lf2.grid(row=0, column=0)
+        Label(lf2, text="Goodbye Hermione!").grid(row=0)
 
 
 
@@ -205,6 +201,7 @@ class DarkArts:
 
 class ActivePlayerBoard:
     def __init__(self, root):
+        self.root = root
 
 
 
