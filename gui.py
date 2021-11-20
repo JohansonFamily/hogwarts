@@ -2,38 +2,19 @@ from tkinter import *
 from PIL import ImageTk  # , Image
 import game
 
-live_heart = '\u2764'
-dead_heart = '\u2661'
-location_symbol = '\u2620'
-empty_location = '\u25cf'
-zip_zap = '\u26a1'
-coin = '\U0001FA99'
-
-
-class ParentScreen:
-    ### CONSTANTS ###
-    WIDTH = 1500
-    HEIGHT = 1000
-
-    def __init__(self, root):
-        self.root = root
-        self.parentFrame = Frame(self.root, width=self.WIDTH, height=self.HEIGHT)
-        self.parentFrame.grid(row=0)
-
-    def close(self):
-        self.parentFrame.destroy()
-
-
-class StartingScreen(ParentScreen):
+class StartingScreen:
     ### CONSTANTS ###
     txtWelcome = "Welcome to the world of Hogwart's Battle!"
     txtHowManyPlayers = "Which brave heroes will be joining us?"
     txtWhichGame = "Which game do you want to play?"
+    WIDTH = 1500
+    HEIGHT = 1000
 
     def __init__(self, root, players, gameOptions):
 
-        super().__init__(root)
-
+        self.root = root
+        self.parentFrame = Frame(self.root, width=self.WIDTH, height=self.HEIGHT)
+        self.parentFrame.grid(row=0)
         self.players = players
         self.gameOptions = gameOptions
         self.arrayImageList = []
@@ -43,6 +24,9 @@ class StartingScreen(ParentScreen):
         self.start_bottom = Frame(self.parentFrame, width=self.WIDTH, height=400)
         self.setupTop()
         self.setupBottom()
+
+    def close(self):
+        self.parentFrame.destroy()
 
     def setupTop(self):
 
@@ -150,28 +134,36 @@ class StartingScreen(ParentScreen):
         game.startGame(self.root, self.gameOptions[self.gameSelection.get()-1], self.players)
 
 
-class GameBoard(ParentScreen):
+class GameBoard:
 
     WIDTH = 1500
     HEIGHT = 1000
 
     def __init__(self, root):
 
-        super().__init__(root)
-        self.locationFrame = Frame(self.parentFrame, width=400, height=300)
-        self.darkArtsFrame = Frame(self.parentFrame, width=400, height=300)
+        self.root = root
+        self.parentFrame = Frame(self.root, width=self.WIDTH, height=self.HEIGHT)
+        self.parentFrame.grid_propagate(0)
 
-        self.locationFrame.grid(row=0, column=0)
-        self.darkArtsFrame.grid(row=0, column=1)
+        self.locationFrame = Frame(self.parentFrame)
+        self.darkArtsFrame = Frame(self.parentFrame)
 
         self.location = Location(self.locationFrame)
         self.darkArts = DarkArts(self.darkArtsFrame)
 
+        self.setupGameBoard()
         # self.cardStore = CardStoreFrame(self.parentFrame)
         # self.villians = VillainFrame(self.parentFrame)
         # self.playersframe = PlayersFrame(self.parentFrame)
         # self.activeplayer = ActivePlayerFrame(self.parentFrame)
 
+    def setupGameBoard(self):
+        self.parentFrame.grid(row=0)
+        self.parentFrame.grid_rowconfigure(0, weight=1)
+        self.parentFrame.grid_rowconfigure(1, weight=4)
+        self.parentFrame.grid_rowconfigure(2, weight=3)
+        self.locationFrame.grid(row=1, column=0)
+        self.darkArtsFrame.grid(row=1, column=1)
 
 class Location:
 
@@ -191,9 +183,9 @@ class DarkArts:
 
     def loadContent(self):
 
-        lf2 = LabelFrame(self.frame, text="Cards")
-        lf2.grid(row=0, column=0)
-        Label(lf2, text="Goodbye Hermione!").grid(row=0)
+        lf = LabelFrame(self.frame, text="Cards")
+        lf.grid(row=0, column=0)
+        Label(lf, text="Goodbye Hermione!").grid(row=0)
 
 
 
@@ -205,110 +197,3 @@ class ActivePlayerBoard:
 
 
 
-        """
-        def __init__(self, root, players):
-
-            super().__init__(root)
-
-            self.players = players
-            self.playercnt = len(players)
-
-            # Setup Images
-            self.imgCardBackIcon = ImageTk.PhotoImage(Image.open('images/cards/card_back.jpg').resize((30,45), Image.ANTIALIAS))
-            self.imgCardBackStore = ImageTk.PhotoImage(Image.open('images/cards/card_back.jpg').resize((90,120), Image.ANTIALIAS))
-
-            self.framePlayer = []
-
-            # Setup main frames
-            self.game_frame = Frame(self.parentFrame,width=1300,height=450)
-            self.player_frame = Frame(root, width=1300, height=400)
-
-
-        def addCardstoBuy():
-            for i in range(0,6):
-                img=Label(frmCardStore, image=imgCardBackStore)
-                img.image = imgCardBackStore
-                if i==0:img.grid(row=0,column=0,padx=10,pady=10)
-                if i==1:img.grid(row=0,column=1,padx=10,pady=10)
-                if i==2:img.grid(row=1,column=0,padx=10,pady=10)
-                if i==3:img.grid(row=1,column=1,padx=10,pady=10)
-                if i==4:img.grid(row=2,column=0,padx=10,pady=10)
-                if i==5:img.grid(row=2,column=1,padx=10,pady=10)
-
-        def addPlayerContent():
-            for i in range(playercnt):
-                Label(frmPlayer[i], text="Life: "+(dead_heart+' ')*(10-players[i].life)+(live_heart+' ')*players[i].life, foreground="red").grid(row=1,column=0,sticky=W,padx=20,pady=(5,0))
-                Label(frmPlayer[i], text="Zip-zaps: "+str(players[i].zips)).grid(row=2,column=0,sticky=W,padx=20)
-                Label(frmPlayer[i], text="Coins: "+str(players[i].coins)).grid(row=3,column=0,sticky=W,padx=20)
-                #Label(frmPlayer[i], text="Cards: "+str(players[i].hand)).grid(row=0,rowspan=3,column=1,padx=20)
-                img=Label(frmPlayer[i], image=imgCardBackIcon)
-                img.image = imgCardBackIcon
-                img.grid(row=0,rowspan=3,column=1,padx=20)
-
-        def updatePlayerStats(i):
-
-            players[i].damage(2)
-            addPlayerContent()
-
-        def selectPlayer(e):
-            frmActivePlayer = LabelFrame(player_frame, text="Selected Player", width=1280, height=550)
-            frmActivePlayer.grid(row=0,column=0)
-            frmActivePlayer.grid_propagate(0)
-            Button(frmActivePlayer, text="Quit", command=root.quit).grid(row=2)
-            try:
-                playernum=int(str(e.widget)[-1:])-1
-            except Exception as e:
-                playernum = 0
-            Button(frmActivePlayer, text="Add Content to Player Sections", command=lambda: addPlayerContent()).grid(row=0)
-            Button(frmActivePlayer, text="Update player stats for "+players[playernum].name, command=lambda: updatePlayerStats(playernum)).grid(row=1)
-
-
-        # Setup main frames for starting screen
-        game_frame = Frame(root, width=1300, height=450)
-        game_frame.grid(row=0, column=0)
-        game_frame.grid_columnconfigure(0,weight=1)
-        game_frame.grid_columnconfigure(1,weight=1)
-        game_frame.grid_columnconfigure(2,weight=1)
-        game_frame.grid_columnconfigure(3,weight=1)
-        game_frame.grid_rowconfigure(0,weight=1)
-        game_frame.grid_rowconfigure(1,weight=1)
-        game_frame.grid_propagate(0)
-        player_frame = Frame(root, width=1300, height=400)
-        player_frame.grid(row=1, column=0)
-        player_frame.grid_columnconfigure(0,weight=1)
-        player_frame.grid_rowconfigure(0,weight=1)
-        player_frame.grid_propagate(0)
-
-        frmLocations = LabelFrame(game_frame, text="Locations", width=200, height=200)
-        frmLocations.grid(row=0,column=0)
-        frmLocations.grid_propagate(0)
-        Button(frmLocations, text="Quit", command=root.quit).grid(row=0,column=0)
-        frmHorcrux = LabelFrame(game_frame, text="Horcrux", width=200, height=250)
-        frmHorcrux.grid(row=1,column=0)
-        frmHorcrux.grid_propagate(0)
-        Button(frmHorcrux, text="Quit", command=root.quit).grid(row=0,column=0)
-        frmDarkArts = LabelFrame(game_frame, text="Dark Arts Cards", width=300, height=450)
-        frmDarkArts.grid(row=0,column=2,rowspan=2)
-        frmDarkArts.grid_propagate(0)
-        Button(frmDarkArts, text="Quit", command=root.quit).grid(row=0,column=0)
-        frmCardStore = LabelFrame(game_frame, text="Cards for Purchase", width=230, height=450)
-        frmCardStore.grid(row=0,column=3,rowspan=2, padx=20)
-        frmCardStore.grid_propagate(0)
-        addCardstoBuy()
-        frmPlayers = Frame(game_frame, width=400, height=450)
-        frmPlayers.grid(row=0,column=4,rowspan=2)
-        frmPlayers.grid_propagate(0)
-        Button(frmPlayers, text="Quit", command=root.quit).grid(row=0,column=0)
-
-        # Setup Player section
-        for i in range(playercnt):
-            lblF = LabelFrame(frmPlayers, text = players[i].name,width=400, height=448/playercnt)
-            lblF.grid(row=i,column=0)
-            lblF.grid_propagate(0)
-            lblF.bind("<Button-1>",selectPlayer)
-        frmPlayer.append(lblF)
-
-    addPlayerContent()
-    #frmPlayer[0].event_generate("<Button-1>", when="tail")
-    selectPlayer(1)
-    """
