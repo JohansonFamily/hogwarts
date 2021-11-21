@@ -1,3 +1,22 @@
+'''
+import tkinter as tk
+
+
+root = tk.Tk()
+root.geometry('250x200')
+root.columnconfigure(0, weight=1)  # Used to allow column 0 in root to expand
+
+some_frame = tk.LabelFrame(root, text='Hello')
+some_frame.grid(row=0, column=0, sticky='ew')
+some_frame.columnconfigure(1, weight=1)  # Used to allow column 1 in some_frame to expand
+
+entry = tk.Entry(some_frame)
+entry.grid(row=0, column=1)
+
+root.mainloop()
+'''
+
+'''
 import tkinter as tk
 from tkinter import ttk
 
@@ -25,6 +44,8 @@ class App(tk.Tk):
 if __name__ == "__main__":
     app = App()
     app.mainloop()
+
+'''
 
 
 '''

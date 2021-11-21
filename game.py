@@ -47,6 +47,10 @@ class Game:
     def startGame(self):
         self.gb.location.loadContent()
         self.gb.darkArts.loadContent()
+        self.gb.villains.loadContent()
+        self.gb.cardStore.loadContent()
+        self.gb.playerList.loadContent()
+        self.gb.activePlayer.loadContent()
         #messagebox.showinfo("showinfo", "Information")
         # for i in range(len(self.players)):
         #    Label(self.root, text=self.players[i].name).grid(row=i)
