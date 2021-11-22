@@ -153,9 +153,9 @@ class GameBoard:
     WIDTH = 1500
     HEIGHT = 1000
 
-    def __init__(self, root):
+    def __init__(self, game):
 
-        self.root = root
+        self.root = game.root
         self.parentFrame = tk.Frame(self.root, width=self.WIDTH, height=self.HEIGHT)
         self.parentFrame.grid_propagate(0)
 
@@ -172,8 +172,8 @@ class GameBoard:
         self.darkArts = DarkArts(self.darkArtsFrame)
         self.cardStore = CardStore(self.cardStoreFrame)
         self.villains = Villains(self.villainsFrame)
-        self.playerList = PlayerList(self.playerListFrame)
-        self.activePlayer = ActivePlayer(self.activePlayerFrame)
+        self.playerList = PlayerList(self.playerListFrame, game)
+        self.activePlayer = ActivePlayer(self.activePlayerFrame, game)
 
         self.setupGameBoard()
 
@@ -182,7 +182,7 @@ class GameBoard:
         self.parentFrame.grid_rowconfigure(0, weight=1)
         self.parentFrame.grid_rowconfigure(1, weight=1)
         self.parentFrame.grid_rowconfigure(2, weight=1)
-        self.parentFrame.grid_rowconfigure(3, weight=20)
+        self.parentFrame.grid_rowconfigure(3, weight=50)
         self.parentFrame.grid_columnconfigure(0, weight=2)
         self.parentFrame.grid_columnconfigure(1, weight=2)
         self.parentFrame.grid_columnconfigure(2, weight=1)
@@ -211,7 +211,7 @@ class Location:
         self.frame = frame
 
     def loadContent(self):
-        tk.Label(self.frame, text="Locations").grid(row=0)
+        tk.Label(self.frame, text='').grid(row=0)
 
 
 class DarkArts:
@@ -229,7 +229,7 @@ class CardStore:
     def __init__(self, frame):
         self.frame = frame
 
-    def loadContent(self, cardDeck):
+    def loadContent(self):
         imgCardBack = Image.open('images/cards/card_back.jpg')
         # imgCardBackIcon = ImageTk.PhotoImage(imgCardBack.resize((30, 45), Image.ANTIALIAS))
         imgResized = imgCardBack.resize((90,120), Image.ANTIALIAS)
@@ -246,7 +246,6 @@ class CardStore:
             if i==5:img.grid(row=2,column=1,padx=10,pady=10)
 
 
-
 class Villains:
 
     def __init__(self, frame):
@@ -258,21 +257,28 @@ class Villains:
 
 class PlayerList:
 
-    def __init__(self, frame):
+    def __init__(self, frame, game):
         self.frame = frame
+        self.game = game
 
     def loadContent(self):
 
         tk.Label(self.frame, text="This is for the Players!").grid(row=0)
+        tk.Label(self.frame, text=self.game.players[0].name).grid(row=1, column=0)
+        tk.Label(self.frame, text=self.game.players[0].life).grid(row=1, column=1)
 
 
 class ActivePlayer:
 
-    def __init__(self, frame):
+    def __init__(self, frame, game):
         self.frame = frame
+        self.game = game
+
 
     def loadContent(self):
 
-        tk.Label(self.frame, text="Active Player Data").grid(row=0)
+        tk.Button(self.frame, text="Hurt Harry", command=lambda: self.damageHarry() ).grid(row=0)
 
-
+    def damageHarry(self):
+        self.game.players[0].damage(2)
+        self.game.gb.playerList.loadContent()

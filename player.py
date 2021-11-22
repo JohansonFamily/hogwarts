@@ -23,6 +23,7 @@ class Player:
         self.discard_pile = []
         self.can_draw_cards = True
         self.can_heal = True
+        self.can_get_coins = True
 
     # In this section, we setup actions that all players can do
 
@@ -74,7 +75,7 @@ class Player:
         None
 
     def playCard(self, card):
-        None
+        card.use(self)
 
 
 # These are specific sub-classes to the player class

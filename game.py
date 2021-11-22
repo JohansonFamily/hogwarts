@@ -43,7 +43,7 @@ class Game:
         # self.villains = Villains()
         # self.locations = Locations()
         # self.darkArts = DarkArts()
-        self.gb = gui.GameBoard(self.root)
+        self.gb = gui.GameBoard(self)
 
 
     def startGame(self):
@@ -53,9 +53,4 @@ class Game:
         self.gb.cardStore.loadContent()
         self.gb.playerList.loadContent()
         self.gb.activePlayer.loadContent()
-        #messagebox.showinfo("showinfo", "Information")
-        # for i in range(len(self.players)):
-        #    Label(self.root, text=self.players[i].name).grid(row=i)
-        # What logic needs to happen here to ensure the game starts?  
 
-        # Call the ui subclass for the gui and the active player section
