@@ -1,5 +1,5 @@
 import tkinter as tk
-from PIL import ImageTk  # , Image
+from PIL import ImageTk, Image
 import game
 
 class StartingScreen:
@@ -20,8 +20,13 @@ class StartingScreen:
         self.arrayImageList = []
         self.arrayPlayerSelection = []
         self.gameSelection = tk.IntVar()
-        self.start_top = tk.Frame(self.parentFrame, width=self.WIDTH, height=600)
+        self.header = tk.Frame(self.parentFrame, width=self.WIDTH, height=100)
+        self.start_top = tk.Frame(self.parentFrame, width=self.WIDTH, height=500)
         self.start_bottom = tk.Frame(self.parentFrame, width=self.WIDTH, height=400)
+        self.header.grid_propagate(0)
+        self.start_top.grid_propagate(0)
+        self.start_bottom.grid_propagate(0)
+        self.header.grid(row=0)
         self.setupTop()
         self.setupBottom()
 
@@ -31,7 +36,7 @@ class StartingScreen:
     def setupTop(self):
 
         # Setup frames for starting screen
-        self.start_top.grid(row=0, column=0)
+        self.start_top.grid(row=1, column=0)
         self.start_top.grid_columnconfigure(0, weight=4)
         self.start_top.grid_columnconfigure(1, weight=1)
         self.start_top.grid_columnconfigure(2, weight=3)
@@ -97,7 +102,13 @@ class StartingScreen:
         arrayImageFiles = []
 
         # Setup frames for pics
-        self.start_bottom.grid(row=1, column=0)
+        self.start_bottom.grid(row=2, column=0)
+        self.start_bottom.grid_columnconfigure(0, weight=100)
+        self.start_bottom.grid_columnconfigure(1, weight=1)
+        self.start_bottom.grid_columnconfigure(2, weight=1)
+        self.start_bottom.grid_columnconfigure(3, weight=1)
+        self.start_bottom.grid_columnconfigure(4, weight=1)
+        self.start_bottom.grid_columnconfigure(5, weight=100)
 
         for i in range(len(self.players)):
             # Load picture files using pillow
@@ -109,12 +120,13 @@ class StartingScreen:
 
             # Set defaults
             self.arrayPlayerSelection[i].set(1)
-            self.arrayImageList[i].grid(row=0, column=i, pady=20)
+            #self.start_bottom.grid_columnconfigure(i+1, weight=1)
+            self.arrayImageList[i].grid(row=0, column=i+1, pady=20)
 
     def showPlayerPics(self, col):
         # Use this if you want a consistent order
         if self.arrayPlayerSelection[col].get() == 1:
-            self.arrayImageList[col].grid(row=0, column=col)
+            self.arrayImageList[col].grid(row=0, column=col+1)
         else:
             self.arrayImageList[col].grid_remove()
 
@@ -123,8 +135,10 @@ class StartingScreen:
         self.startGame()
 
     def startGame(self):
+        self.header.destroy()
         self.start_top.destroy()
         self.start_bottom.destroy()
+        self.parentFrame.destroy()
 
         # Establish final list of players
         for i in reversed(range(len(self.players))):
@@ -153,7 +167,7 @@ class GameBoard:
         self.playerListFrame = tk.LabelFrame(self.parentFrame, text="Player List")
         self.activePlayerFrame = tk.LabelFrame(self.parentFrame, text="Active Player")
 
-        #self.header = Header(self.headerFrame)
+        self.header = Header(self.headerFrame)
         self.location = Location(self.locationFrame)
         self.darkArts = DarkArts(self.darkArtsFrame)
         self.cardStore = CardStore(self.cardStoreFrame)
@@ -166,21 +180,22 @@ class GameBoard:
     def setupGameBoard(self):
         self.parentFrame.grid(row=0)
         self.parentFrame.grid_rowconfigure(0, weight=1)
-        self.parentFrame.grid_rowconfigure(1, weight=20)
-        self.parentFrame.grid_rowconfigure(2, weight=15)
-        self.parentFrame.grid_columnconfigure(0, weight=1)
-        self.parentFrame.grid_columnconfigure(1, weight=1)
+        self.parentFrame.grid_rowconfigure(1, weight=1)
+        self.parentFrame.grid_rowconfigure(2, weight=1)
+        self.parentFrame.grid_rowconfigure(3, weight=20)
+        self.parentFrame.grid_columnconfigure(0, weight=2)
+        self.parentFrame.grid_columnconfigure(1, weight=2)
         self.parentFrame.grid_columnconfigure(2, weight=1)
         self.parentFrame.grid_columnconfigure(3, weight=1)
-        self.parentFrame.grid_columnconfigure(4, weight=1)
+        self.parentFrame.grid_columnconfigure(4, weight=10)
 
-        #self.headerFrame.grid(row=0,columnspan=5, sticky="EW")
-        self.locationFrame.grid(row=1, column=0, sticky='EW')
-        self.darkArtsFrame.grid(row=1, column=1, sticky='NSEW')
-        self.villainsFrame.grid(row=1, column=2)
-        self.cardStoreFrame.grid(row=1, column=3)
-        self.playerListFrame.grid(row=1, column=4)
-        self.activePlayerFrame.grid(row=2, columnspan=5)
+        self.headerFrame.grid(row=0,columnspan=5, padx=10, sticky="EW")
+        self.locationFrame.grid(row=1, column=0, padx=10, sticky='NSEW')
+        self.darkArtsFrame.grid(row=1, column=1, columnspan=2, padx=10, sticky='NSEW')
+        self.villainsFrame.grid(row=2, columnspan=3, padx=10, sticky='NSEW')
+        self.cardStoreFrame.grid(row=1, rowspan=2, column=3, padx=10, sticky='NSEW')
+        self.playerListFrame.grid(row=1, rowspan=2, column=4, padx=10, sticky='NSEW')
+        self.activePlayerFrame.grid(row=3, columnspan=5, padx=10, pady=10, sticky='NSEW')
 
 class Header:
 
@@ -214,9 +229,22 @@ class CardStore:
     def __init__(self, frame):
         self.frame = frame
 
-    def loadContent(self):
+    def loadContent(self, cardDeck):
+        imgCardBack = Image.open('images/cards/card_back.jpg')
+        # imgCardBackIcon = ImageTk.PhotoImage(imgCardBack.resize((30, 45), Image.ANTIALIAS))
+        imgResized = imgCardBack.resize((90,120), Image.ANTIALIAS)
+        imgCardBackStore = ImageTk.PhotoImage(imgResized)
 
-        tk.Label(self.frame, text="This is for the Card Store!").grid(row=0)
+        for i in range(0,6):
+            img=tk.Label(self.frame, image=imgCardBackStore)
+            img.image = imgCardBackStore
+            if i==0:img.grid(row=0,column=0,padx=10,pady=10)
+            if i==1:img.grid(row=0,column=1,padx=10,pady=10)
+            if i==2:img.grid(row=1,column=0,padx=10,pady=10)
+            if i==3:img.grid(row=1,column=1,padx=10,pady=10)
+            if i==4:img.grid(row=2,column=0,padx=10,pady=10)
+            if i==5:img.grid(row=2,column=1,padx=10,pady=10)
+
 
 
 class Villains:

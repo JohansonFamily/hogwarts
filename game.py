@@ -20,9 +20,11 @@ def selectGame(root):
 
 
 def startGame(root, game, players):
+
     if game == "Game 1":
         my_game = Game(root, players)
         my_game.startGame()
+
 
 class Game:
     # This section is for hard-coded variables or text strings that will never change and relate to all games.
