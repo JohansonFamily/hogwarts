@@ -66,7 +66,7 @@ class Player:
         None
 
     def giveCoin(self, nbr):
-        None
+        self.coins += 1
 
     def removeCoin(self, nbr):
         None

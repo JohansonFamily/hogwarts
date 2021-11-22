@@ -1,6 +1,7 @@
 import gui
 import player
-from tkinter import messagebox
+import random
+import cards
 
 def selectGame(root):
     # Which games do we want to make available to the user?
@@ -39,7 +40,8 @@ class Game:
     def __init__(self, root, players):
         self.root = root
         self.players = players
-        # self.cards = Cards()
+        self.cardDeck = self.getCardDeck()
+
         # self.villains = Villains()
         # self.locations = Locations()
         # self.darkArts = DarkArts()
@@ -54,3 +56,9 @@ class Game:
         self.gb.playerList.loadContent()
         self.gb.activePlayer.loadContent()
 
+    def getCardDeck(self):
+        cardDeck = []
+        for i in range(0,6):
+            cardDeck.append(cards.Alohamora())
+        random.shuffle(cardDeck)
+        return cardDeck

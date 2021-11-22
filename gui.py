@@ -1,6 +1,7 @@
 import tkinter as tk
 from PIL import ImageTk, Image
 import game
+import cards
 
 class StartingScreen:
     ### CONSTANTS ###
@@ -170,7 +171,7 @@ class GameBoard:
         self.header = Header(self.headerFrame)
         self.location = Location(self.locationFrame)
         self.darkArts = DarkArts(self.darkArtsFrame)
-        self.cardStore = CardStore(self.cardStoreFrame)
+        self.cardStore = CardStore(self.cardStoreFrame, game)
         self.villains = Villains(self.villainsFrame)
         self.playerList = PlayerList(self.playerListFrame, game)
         self.activePlayer = ActivePlayer(self.activePlayerFrame, game)
@@ -182,11 +183,11 @@ class GameBoard:
         self.parentFrame.grid_rowconfigure(0, weight=1)
         self.parentFrame.grid_rowconfigure(1, weight=1)
         self.parentFrame.grid_rowconfigure(2, weight=1)
-        self.parentFrame.grid_rowconfigure(3, weight=50)
+        self.parentFrame.grid_rowconfigure(3, weight=80)
         self.parentFrame.grid_columnconfigure(0, weight=2)
         self.parentFrame.grid_columnconfigure(1, weight=2)
         self.parentFrame.grid_columnconfigure(2, weight=1)
-        self.parentFrame.grid_columnconfigure(3, weight=1)
+        self.parentFrame.grid_columnconfigure(3, weight=0)
         self.parentFrame.grid_columnconfigure(4, weight=10)
 
         self.headerFrame.grid(row=0,columnspan=5, padx=10, sticky="EW")
@@ -226,24 +227,42 @@ class DarkArts:
 
 class CardStore:
 
-    def __init__(self, frame):
+    def __init__(self, frame, game):
         self.frame = frame
+        self.game = game
 
     def loadContent(self):
-        imgCardBack = Image.open('images/cards/card_back.jpg')
-        # imgCardBackIcon = ImageTk.PhotoImage(imgCardBack.resize((30, 45), Image.ANTIALIAS))
-        imgResized = imgCardBack.resize((90,120), Image.ANTIALIAS)
-        imgCardBackStore = ImageTk.PhotoImage(imgResized)
+        deck = self.game.cardDeck
+        print(deck[0].name)
+        print(deck[0].imageFile)
+        imgRaw = deck[0].imageFile
+        imgResized = imgRaw.resize((90,120), Image.ANTIALIAS)
+        imgProcessed = ImageTk.PhotoImage(imgResized)
 
-        for i in range(0,6):
-            img=tk.Label(self.frame, image=imgCardBackStore)
-            img.image = imgCardBackStore
-            if i==0:img.grid(row=0,column=0,padx=10,pady=10)
-            if i==1:img.grid(row=0,column=1,padx=10,pady=10)
-            if i==2:img.grid(row=1,column=0,padx=10,pady=10)
-            if i==3:img.grid(row=1,column=1,padx=10,pady=10)
-            if i==4:img.grid(row=2,column=0,padx=10,pady=10)
-            if i==5:img.grid(row=2,column=1,padx=10,pady=10)
+        img1=tk.Button(self.frame, image=imgProcessed, command=lambda: self.useCard(deck[0]))
+        img1.image=imgProcessed
+        img1.grid(row=0,column=0,padx=10,pady=10)
+        img2=tk.Button(self.frame, image=imgProcessed, command=lambda: self.useCard(deck[1]))
+        img2.image = imgProcessed
+        img2.grid(row=0,column=1,padx=10,pady=10)
+        img3=tk.Button(self.frame, image=imgProcessed, command=lambda: self.useCard(deck[2]))
+        img3.image = imgProcessed
+        img3.grid(row=1,column=0,padx=10,pady=10)
+        img4=tk.Button(self.frame, image=imgProcessed, command=lambda: self.useCard(deck[3]))
+        img4.image = imgProcessed
+        img4.grid(row=1,column=1,padx=10,pady=10)
+        img5=tk.Button(self.frame, image=imgProcessed, command=lambda: self.useCard(deck[4]))
+        img5.image = imgProcessed
+        img5.grid(row=2,column=0,padx=10,pady=10)
+        img6=tk.Button(self.frame, image=imgProcessed, command=lambda: self.useCard(deck[5]))
+        img6.image = imgProcessed
+        img6.grid(row=2,column=1,padx=10,pady=10)
+
+
+    def useCard(self, card):
+        card.use(self.game.players[0])
+        self.game.gb.playerList.loadContent()
+
 
 
 class Villains:
@@ -266,6 +285,7 @@ class PlayerList:
         tk.Label(self.frame, text="This is for the Players!").grid(row=0)
         tk.Label(self.frame, text=self.game.players[0].name).grid(row=1, column=0)
         tk.Label(self.frame, text=self.game.players[0].life).grid(row=1, column=1)
+        tk.Label(self.frame, text=self.game.players[0].coins).grid(row=1, column=2)
 
 
 class ActivePlayer:
