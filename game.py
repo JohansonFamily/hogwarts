@@ -48,6 +48,7 @@ class Game:
         # self.locations = Locations()
         # self.darkArts = DarkArts()
         self.gb = gui.GameBoard(self)
+        self.root.bind('<Return>', self.enterNext)
 
 
     def startGame(self):
@@ -65,6 +66,9 @@ class Game:
             cardDeck.append(cards.ZipCard())
         random.shuffle(cardDeck)
         return cardDeck
+
+    def enterNext(self, e):
+        self.nextTurn()
 
     def nextTurn(self):
         if self.idxActivePlayer == len(self.players)-1:

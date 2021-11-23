@@ -284,10 +284,10 @@ class ActivePlayer:
     def loadContent(self):
         for widget in self.frame.winfo_children():
             widget.destroy()
-        b1 = tk.Button(self.frame, text="Hurt " + self.game.ap.name, width=25, command=lambda: self.damage(2))
+        self.frame.config(text=self.game.ap.name)
+        b1 = tk.Button(self.frame, text="Hurt Player", width=20, height=10, highlightbackground='red',
+             activeforeground="blue", command=lambda: self.damage(2))
         b1.grid(row=0)
-        b2 = tk.Button(self.frame, text="Next Turn", command=lambda: self.game.nextTurn())
-        b2.grid(row=1)
 
 
     def damage(self, nbr):
