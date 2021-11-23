@@ -165,7 +165,7 @@ class GameBoard:
         self.parentFrame.grid_columnconfigure(1, weight=2)
         self.parentFrame.grid_columnconfigure(2, weight=1)
         self.parentFrame.grid_columnconfigure(3, weight=0)
-        self.parentFrame.grid_columnconfigure(4, weight=10)
+        self.parentFrame.grid_columnconfigure(4, weight=5)
 
         self.headerFrame.grid(row=0,columnspan=5, padx=10, sticky="EW")
         self.locationFrame.grid(row=1, column=0, padx=10, sticky='NSEW')
@@ -174,6 +174,7 @@ class GameBoard:
         self.cardStoreFrame.grid(row=1, rowspan=2, column=3, padx=10, sticky='NSEW')
         self.playerListFrame.grid(row=1, rowspan=2, column=4, padx=10, sticky='NSEW')
         self.activePlayerFrame.grid(row=3, columnspan=5, padx=10, pady=10, sticky='NSEW')
+
 
 class Header:
 
