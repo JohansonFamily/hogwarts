@@ -40,6 +40,8 @@ class Game:
     def __init__(self, root, players):
         self.root = root
         self.players = players
+        self.idxActivePlayer = 0
+        self.ap = players[self.idxActivePlayer]
         self.cardDeck = self.getCardDeck()
 
         # self.villains = Villains()
@@ -60,5 +62,16 @@ class Game:
         cardDeck = []
         for i in range(0,6):
             cardDeck.append(cards.Alohamora())
+            cardDeck.append(cards.ZipCard())
         random.shuffle(cardDeck)
         return cardDeck
+
+    def nextTurn(self):
+        if self.idxActivePlayer == len(self.players)-1:
+            self.idxActivePlayer=0
+
+        else:
+            self.idxActivePlayer+=1
+        self.ap = self.players[self.idxActivePlayer]
+        self.gb.activePlayer.loadContent()
+        self.gb.playerList.loadContent()

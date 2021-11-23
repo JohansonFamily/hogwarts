@@ -24,6 +24,7 @@ class Player:
         self.can_draw_cards = True
         self.can_heal = True
         self.can_get_coins = True
+        self.can_get_zips = True
 
     # In this section, we setup actions that all players can do
 
@@ -60,7 +61,7 @@ class Player:
         self.stunned = True
 
     def giveZip(self, nbr):
-        None
+        self.zips +=1
 
     def removeZip(self, nbr):
         None
