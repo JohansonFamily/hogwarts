@@ -63,7 +63,7 @@ class Game:
         cardDeck = []
         for i in range(0,6):
             cardDeck.append(cards.Alohamora())
-            cardDeck.append(cards.ZipCard())
+            cardDeck.append(cards.Incendio())
         random.shuffle(cardDeck)
         return cardDeck
 

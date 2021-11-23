@@ -20,7 +20,7 @@ class Alohamora(Card):
     # Since this is a hard-coded string and will not change, it can be outside of the init.
     # It does not hurt to move it inside, but this can be here.
     name = "Alohamora"
-    imageFile = Image.open('images/cards/card_back.jpg')
+    imageFile = Image.open('images/cards/alohamora.jpg')
 
     def __init__(self):
         super().__init__()
@@ -31,11 +31,11 @@ class Alohamora(Card):
             player.giveCoin(1)
 
 
-class ZipCard(Card):
+class Incendio(Card):
     # Since this is a hard-coded string and will not change, it can be outside of the init.
     # It does not hurt to move it inside, but this can be here.
-    name = "Zipzap Card"
-    imageFile = Image.open('images/cards/card_back.jpg')
+    name = "Incendio"
+    imageFile = Image.open('images/cards/incendio.jpg')
 
     def __init__(self):
         super().__init__()
@@ -44,3 +44,5 @@ class ZipCard(Card):
     def use(self, player):
         if player.can_get_zips:
             player.giveZip(1)
+
+        # Draw a card

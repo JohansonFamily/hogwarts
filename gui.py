@@ -211,14 +211,15 @@ class CardStore:
 
     def loadContent(self):
         deck = self.game.cardDeck
-        imgRaw = deck[0].imageFile
-        imgResized = imgRaw.resize((90,120), Image.ANTIALIAS)
-        imgProcessed = ImageTk.PhotoImage(imgResized)
+
 
         for i in range(0,6):
+            imgRaw = deck[i].imageFile
+            imgResized = imgRaw.resize((110, 150), Image.ANTIALIAS)
+            imgProcessed = ImageTk.PhotoImage(imgResized)
             img=tk.Button(self.frame, image=imgProcessed, command=lambda i=i: self.useCard(deck[i]))
             img.image=imgProcessed
-            img.grid(row=math.floor(i/2),column=i%2,padx=10,pady=5)
+            img.grid(row=math.floor(i/2),column=i%2,padx=1,pady=1)
 
 
     def useCard(self, card):
