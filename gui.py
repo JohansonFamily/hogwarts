@@ -225,6 +225,7 @@ class CardStore:
         self.game.gb.playerList.loadContent()
         self.game.gb.activePlayer.loadContent()
 
+
 class Villains:
 
     def __init__(self, frame):
@@ -234,24 +235,30 @@ class Villains:
 
         tk.Label(self.frame, text="This is for the Villains!").grid(row=0)
 
+
 class PlayerList:
 
     def __init__(self, frame, game):
         self.frame = frame
         self.game = game
+        self.lblFrame = []
+        for i in range(len(self.game.players)):
+            self.frame.grid_rowconfigure(i, weight=1)
+            self.lblFrame.append(tk.LabelFrame(self.frame, text=self.game.players[i].name))
+            self.lblFrame[i].grid(row=i, pady=5, sticky='NSEW')
+            self.lblFrame[i].bind("<Button-1>", self.selectPlayer)
+        self.loadContent()
 
     def loadContent(self):
         self.frame.grid_columnconfigure(0, weight=2)
         for i in range(len(self.game.players)):
-            self.frame.grid_rowconfigure(i, weight=1)
-            lblFrame = tk.LabelFrame(self.frame, text=self.game.players[i].name)
-            lblFrame.grid(row=i, pady=5, sticky='NSEW')
-            lblFrame.bind("<Button-1>", self.selectPlayer)
-            lblLife = tk.Label(lblFrame, text="Health: "+str(self.game.players[i].life))
+            for widget in self.lblFrame[i].winfo_children():
+                widget.destroy()
+            lblLife = tk.Label(self.lblFrame[i], text="Health: "+str(self.game.players[i].life))
             lblLife.grid(row=0, padx=10, pady=(5,0), sticky='w')
-            lblCoins = tk.Label(lblFrame, text="Coins: "+str(self.game.players[i].coins))
+            lblCoins = tk.Label(self.lblFrame[i], text="Coins: "+str(self.game.players[i].coins))
             lblCoins.grid(row=1, padx=10, sticky='w')
-            lblZips = tk.Label(lblFrame, text="Zip-zaps: "+str(self.game.players[i].zips))
+            lblZips = tk.Label(self.lblFrame[i], text="Zip-zaps: "+str(self.game.players[i].zips))
             lblZips.grid(row=2, padx=10, sticky='w')
 
     def selectPlayer(self, e):
@@ -265,6 +272,7 @@ class PlayerList:
 
         self.game.gb.activePlayer.loadContent()
 
+
 class ActivePlayer:
 
     def __init__(self, frame, game, ap):
@@ -275,7 +283,7 @@ class ActivePlayer:
     def loadContent(self):
         for widget in self.frame.winfo_children():
             widget.destroy()
-        b1 = tk.Button(self.frame, text="Hurt " + self.game.ap.name, command=lambda: self.damage(2))
+        b1 = tk.Button(self.frame, text="Hurt " + self.game.ap.name, width=25, command=lambda: self.damage(2))
         b1.grid(row=0)
         b2 = tk.Button(self.frame, text="Next Turn", command=lambda: self.game.nextTurn())
         b2.grid(row=1)
