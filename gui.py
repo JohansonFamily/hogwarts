@@ -134,9 +134,12 @@ class GameBoard:
     def __init__(self, game):
 
         self.root = game.root
+
+        # establish parentFrame that will hold all gui elements
         self.parentFrame = tk.Frame(self.root, width=self.WIDTH, height=self.HEIGHT)
         self.parentFrame.grid_propagate(0)
 
+        # Create frames for each section
         self.headerFrame = tk.LabelFrame(self.parentFrame, text="Header")
         self.locationFrame = tk.LabelFrame(self.parentFrame, text='Locations')
         self.darkArtsFrame = tk.LabelFrame(self.parentFrame, text="Dark Arts")
@@ -145,6 +148,7 @@ class GameBoard:
         self.playerListFrame = tk.Frame(self.parentFrame)
         self.activePlayerFrame = tk.LabelFrame(self.parentFrame, text="Active Player")
 
+        # Create objects for each section and pass in frame and appropriate data
         self.header = Header(self.headerFrame)
         self.location = Location(self.locationFrame)
         self.darkArts = DarkArts(self.darkArtsFrame)
@@ -153,9 +157,11 @@ class GameBoard:
         self.playerList = PlayerList(self.playerListFrame, game)
         self.activePlayer = ActivePlayer(self.activePlayerFrame, game, 0)
 
+        # Place the objects on the game board
         self.setupGameBoard()
 
     def setupGameBoard(self):
+        # Set up weights for each section
         self.parentFrame.grid(row=0)
         self.parentFrame.grid_rowconfigure(0, weight=1)
         self.parentFrame.grid_rowconfigure(1, weight=1)
@@ -167,6 +173,7 @@ class GameBoard:
         self.parentFrame.grid_columnconfigure(3, weight=0)
         self.parentFrame.grid_columnconfigure(4, weight=5)
 
+        # place each frame into the right section
         self.headerFrame.grid(row=0,columnspan=5, padx=10, sticky="EW")
         self.locationFrame.grid(row=1, column=0, padx=10, sticky='NSEW')
         self.darkArtsFrame.grid(row=1, column=1, columnspan=2, padx=10, sticky='NSEW')
@@ -178,6 +185,7 @@ class GameBoard:
 
 class Header:
 
+    # This is for any admin function.  I am thinking save game or next turn???
     def __init__(self,frame):
         self.frame = frame
         self.lbl = tk.Label(self.frame, text="Header information to go here.")
@@ -211,17 +219,17 @@ class CardStore:
 
     def loadContent(self):
         deck = self.game.cardDeck
-
-
+        # layout cards
         for i in range(0,6):
+            # Pull the image file from the card object, resize it to what we want, then use a button to display
             imgRaw = deck[i].imageFile
-            imgResized = imgRaw.resize((110, 150), Image.ANTIALIAS)
+            imgResized = imgRaw.resize((90, 120), Image.ANTIALIAS)
             imgProcessed = ImageTk.PhotoImage(imgResized)
             img=tk.Button(self.frame, image=imgProcessed, command=lambda i=i: self.useCard(deck[i]))
             img.image=imgProcessed
             img.grid(row=math.floor(i/2),column=i%2,padx=1,pady=1)
 
-
+    # This is what is called if someone clicks on the card
     def useCard(self, card):
         card.use(self.game.ap)
         self.game.gb.playerList.loadContent()
@@ -252,16 +260,39 @@ class PlayerList:
         self.loadContent()
 
     def loadContent(self):
+        heartRaw = Image.open('images/heart.jpg')
+        heartResized = heartRaw.resize((15, 15), Image.ANTIALIAS)
+        heartProcessed = ImageTk.PhotoImage(heartResized)
+        coinRaw = Image.open('images/coin.jpg')
+        coinResized = coinRaw.resize((15, 15), Image.ANTIALIAS)
+        coinProcessed = ImageTk.PhotoImage(coinResized)
+        zipRaw = Image.open('images/zip.jpg')
+        zipResized = zipRaw.resize((15, 15), Image.ANTIALIAS)
+        zipProcessed = ImageTk.PhotoImage(zipResized)
+
+
         self.frame.grid_columnconfigure(0, weight=2)
         for i in range(len(self.game.players)):
             for widget in self.lblFrame[i].winfo_children():
                 widget.destroy()
-            lblLife = tk.Label(self.lblFrame[i], text="Health: "+str(self.game.players[i].life))
+            lblLife = tk.Label(self.lblFrame[i], text="Health:  "+str(self.game.players[i].life))
             lblLife.grid(row=0, padx=10, pady=(5,0), sticky='w')
-            lblCoins = tk.Label(self.lblFrame[i], text="Coins: "+str(self.game.players[i].coins))
+            lblCoins = tk.Label(self.lblFrame[i], text="Coins:  "+str(self.game.players[i].coins))
             lblCoins.grid(row=1, padx=10, sticky='w')
             lblZips = tk.Label(self.lblFrame[i], text="Zip-zaps: "+str(self.game.players[i].zips))
             lblZips.grid(row=2, padx=10, sticky='w')
+            for j in range(self.game.players[i].life):
+                heart = tk.Label(self.lblFrame[i], image=heartProcessed)
+                heart.image = heartProcessed
+                heart.grid(row=0, column=j+1)
+            for j in range(min(10,self.game.players[i].coins)):
+                coins = tk.Label(self.lblFrame[i], image=coinProcessed)
+                coins.image = coinProcessed
+                coins.grid(row=1, column=j+1)
+            for j in range(min(10,self.game.players[i].zips)):
+                zip = tk.Label(self.lblFrame[i], image=zipProcessed)
+                zip.image = zipProcessed
+                zip.grid(row=2, column=j+1)
 
     def selectPlayer(self, e):
 

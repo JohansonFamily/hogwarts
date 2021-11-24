@@ -6,14 +6,14 @@ root.title('Hogwarts Battle')
 root.geometry("1500x1000+100+100")
 # root.config(bg='white')
 
-
+# This function, tied to the escape key, will end the entire program
 def escape(e):
 	try:
 		root.quit()
 	except Exception as exc:
 		print(str(e.type) + ": " + str(exc))
 
-
+# This ties the escape key to ending the program
 root.bind("<Escape>", escape)
 
 # Add fonts for all the widgets

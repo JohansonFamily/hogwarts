@@ -34,7 +34,7 @@ class Player:
         if self.can_draw_cards:
             if len(self.deck) == 0:
                 self.deck = self.discard_pile
-                self.discard_pile.empty()
+                self.discard_pile.clear()
                 random.shuffle(self.deck)
             self.hand.append(self.deck[0])
             self.deck.remove(self.deck[0])
@@ -60,22 +60,22 @@ class Player:
         # What else needs to happen when someone is stunned?
         self.stunned = True
 
-    def giveZip(self, nbr):
+    def give_zip(self, nbr):
         self.zips +=1
 
-    def removeZip(self, nbr):
+    def take_zip(self, nbr):
         None
 
-    def giveCoin(self, nbr):
+    def give_coin(self, nbr):
         self.coins += 1
 
-    def removeCoin(self, nbr):
+    def remove_coin(self, nbr):
         None
 
-    def endTurn(self, nbr):
+    def end_turn(self, nbr):
         None
 
-    def playCard(self, card):
+    def play_card(self, card):
         card.use(self)
 
 
@@ -84,7 +84,7 @@ class Harry(Player):
     # Since this is a hard-coded string and will not change, it can be outside of the init.
     # It does not hurt to move it inside, but this can be here.
     name = "Harry Potter"
-    imageFile = Image.open('images/harry.jpg')
+    imageFile = Image.open('images/players/harry/harry.jpg')
     
     # All classes need their own init
     def __init__(self):
@@ -111,7 +111,7 @@ class Hermione(Player):
     # Since this is a hard-coded string and will not change, it can be outside of the init.
     # It does not hurt to move it inside, but this can be here.
     name = "Hermione Granger"
-    imageFile = Image.open('images/hermione.jpg')
+    imageFile = Image.open('images/players/hermione/hermione.jpg')
     
     def __init__(self):
         # The super() function pulls in all the attributes and functions of the parent class.
@@ -122,7 +122,7 @@ class Neville(Player):
     # Since this is a hard-coded string and will not change, it can be outside of the init.
     # It does not hurt to move it inside, but this can be here.
     name = "Neville Longbottom"
-    imageFile = Image.open('images/neville.jpg')
+    imageFile = Image.open('images/players/neville/neville.jpg')
     
     def __init__(self):
         # The super() function pulls in all the attributes and functions of the parent class.
@@ -133,7 +133,7 @@ class Ron(Player):
     # Since this is a hard-coded string and will not change, it can be outside of the init.
     # It does not hurt to move it inside, but this can be here.
     name = "Ron Weasly"
-    imageFile = Image.open('images/ron.jpg')
+    imageFile = Image.open('images/players/ron/ron.jpg')
     
     def __init__(self):
         # The super() function pulls in all the attributes and functions of the parent class.
