@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkmacosx import Button
 from PIL import ImageTk, Image
 import game
 import math
@@ -225,9 +226,12 @@ class CardStore:
             imgRaw = deck[i].imageFile
             imgResized = imgRaw.resize((90, 120), Image.ANTIALIAS)
             imgProcessed = ImageTk.PhotoImage(imgResized)
-            img=tk.Button(self.frame, image=imgProcessed, command=lambda i=i: self.useCard(deck[i]))
+            img=Button(self.frame, image=imgProcessed, bd=5, bg='systemWindowBackgroundColor', borderless=0,
+                       focuscolor='systemWindowBackgroundColor', activebackground='systemWindowBackgroundColor',
+                       command=lambda i=i: self.useCard(deck[i]))
             img.image=imgProcessed
-            img.grid(row=math.floor(i/2),column=i%2,padx=1,pady=1)
+            img.grid(row=math.floor(i/2),column=i%2,padx=0,pady=1)
+            #print(img.config(focusthickness))
 
     # This is what is called if someone clicks on the card
     def useCard(self, card):
@@ -317,8 +321,8 @@ class ActivePlayer:
         for widget in self.frame.winfo_children():
             widget.destroy()
         self.frame.config(text=self.game.ap.name)
-        b1 = tk.Button(self.frame, text="Hurt Player", width=20, height=10, highlightbackground='red',
-             activeforeground="blue", command=lambda: self.damage(2))
+        b1 = Button(self.frame, text="Hurt Player", width=200, height=100, bg='red',
+             fg="white", font='bold', command=lambda: self.damage(2))
         b1.grid(row=0)
 
 

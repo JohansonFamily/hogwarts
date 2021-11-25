@@ -53,10 +53,13 @@ class Player:
 
     # Add more player functions here:
     def heal(self, nbr):
-        # This can be filled out later - just want to get the actions out
-        None
+        # What else needs to happen when someone is stunned?
+        self.life += nbr
+        if self.life > 10:
+            self.life = 10
 
-    def stun(self):
+
+def stun(self):
         # What else needs to happen when someone is stunned?
         self.stunned = True
 
