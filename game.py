@@ -29,7 +29,6 @@ def startGame(root, game, players):
         # This line could be in the init, but I wanted to separate it for troubleshooting purposes.
         my_game.load_data()
 
-
 class Game:
     # This section is for hard-coded variables or text strings that will never change and relate to all games.
     name = "Hogwart's Battle"

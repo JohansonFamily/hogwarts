@@ -155,7 +155,7 @@ class GameBoard:
         self.cardStore = CardStore(self.cardStoreFrame, game)
         self.villains = Villains(self.villainsFrame)
         self.playerList = PlayerList(self.playerListFrame, game)
-        self.activePlayer = ActivePlayer(self.activePlayerFrame, game, 0)
+        self.activePlayer = ActivePlayer(self.activePlayerFrame, game, game.ap)
 
         # Place the objects on the game board
         self.setupGameBoard()
@@ -321,11 +321,12 @@ class ActivePlayer:
             widget.destroy()
         self.frame.config(text=self.game.ap.name)
         b1 = Button(self.frame, text="Hurt Player", width=200, height=100, bg='red',
-             fg="white", font='bold', command=lambda: self.damage(2))
+             fg="white", command=lambda: self.damage(2))
         b1.grid(row=0)
         b2 = Button (self.frame, text = "Heal Player", width = 200, height = 100,
-             bg = 'green', fg = 'white', font='italics', command=lambda: self.heal(2))
+             bg = 'green', fg = 'white', command=lambda: self.heal(2))
         b2.grid(row=1)
+
 
     def damage(self, nbr):
         self.game.ap.damage(nbr)
