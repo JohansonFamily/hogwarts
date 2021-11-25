@@ -325,7 +325,6 @@ class ActivePlayer:
              fg="white", font='bold', command=lambda: self.damage(2))
         b1.grid(row=0)
 
-
     def damage(self, nbr):
         self.game.ap.damage(nbr)
         self.game.gb.playerList.loadContent()

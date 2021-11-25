@@ -59,7 +59,7 @@ class Player:
             self.life = 10
 
 
-def stun(self):
+    def stun(self):
         # What else needs to happen when someone is stunned?
         self.stunned = True
 
