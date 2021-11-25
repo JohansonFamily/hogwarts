@@ -225,15 +225,28 @@ class CardStore:
             imgRaw = deck[i].imageFile
             imgResized = imgRaw.resize((90, 120), Image.ANTIALIAS)
             imgProcessed = ImageTk.PhotoImage(imgResized)
-            img=Button(self.frame, image=imgProcessed, bd=5, bg='systemWindowBackgroundColor', borderless=0,
-                       focuscolor='systemWindowBackgroundColor', activebackground='systemWindowBackgroundColor',
-                       command=lambda i=i: self.useCard(deck[i]))
+            img=tk.Button(self.frame, image=imgProcessed, bd=0,
+#                       focuscolor='systemWindowBackgroundColor', activebackground='systemWindowBackgroundColor',
+                       command=lambda i=i: self.use_card(deck[i]))
             img.image=imgProcessed
-            img.grid(row=i//2,column=i%2,padx=0,pady=0)
-            #print(img.config(focusthickness))
+            img.grid(row=i//2,column=i%2,padx=5,pady=5)
+            img.bind("<Enter>", lambda event, i=imgRaw: self.show_card(event, i))
+            img.bind("<Leave>", self.hide_card)
+
+    def show_card(self, e, img):
+        imgRaw = img
+        imgResized = imgRaw.resize((300,400), Image.ANTIALIAS)
+        imgProcessed = ImageTk.PhotoImage(imgResized)
+        self.imgLabel=tk.Label(self.game.root, image=imgProcessed)
+        self.imgLabel.image = imgProcessed
+        self.imgLabel.grid(row=0, column=0, pady=10, sticky='s')
+
+    def hide_card(self, e):
+        self.imgLabel.destroy()
+
 
     # This is what is called if someone clicks on the card
-    def useCard(self, card):
+    def use_card(self, card):
         card.use(self.game.ap)
         self.game.gb.playerList.loadContent()
         self.game.gb.activePlayer.loadContent()
