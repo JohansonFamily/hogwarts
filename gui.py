@@ -2,7 +2,6 @@ import tkinter as tk
 from tkmacosx import Button
 from PIL import ImageTk, Image
 import game
-import math
 
 class StartingScreen:
     ### CONSTANTS ###
@@ -230,7 +229,7 @@ class CardStore:
                        focuscolor='systemWindowBackgroundColor', activebackground='systemWindowBackgroundColor',
                        command=lambda i=i: self.useCard(deck[i]))
             img.image=imgProcessed
-            img.grid(row=math.floor(i/2),column=i%2,padx=0,pady=1)
+            img.grid(row=i//2,column=i%2,padx=0,pady=0)
             #print(img.config(focusthickness))
 
     # This is what is called if someone clicks on the card
@@ -324,7 +323,14 @@ class ActivePlayer:
         b1 = Button(self.frame, text="Hurt Player", width=200, height=100, bg='red',
              fg="white", font='bold', command=lambda: self.damage(2))
         b1.grid(row=0)
+        b2 = Button (self.frame, text = "Heal Player", width = 200, height = 100,
+             bg = 'green', fg = 'white', font='italics', command=lambda: self.heal(2))
+        b2.grid(row=1)
 
     def damage(self, nbr):
         self.game.ap.damage(nbr)
+        self.game.gb.playerList.loadContent()
+
+    def heal(self,nbr):
+        self.game.ap.heal(nbr)
         self.game.gb.playerList.loadContent()
