@@ -35,7 +35,7 @@ class Incendio(Card):
 
     def __init__(self):
         super().__init__()
-        self.cost = 0
+        self.cost = 4
 
     def use(self, player):
         if player.can_get_zips:
@@ -43,3 +43,16 @@ class Incendio(Card):
         if player.can_draw_cards:
             None
             # player.draw_card()
+
+class InvisibilityCloak(Card):
+    name = "Invisibility Cloak"
+    imageFile = Image.open('images/players/harry/invisibility cloak.jpg')
+
+    def __init__(self):
+        super().__init__()
+        self.cost = 0
+
+    def use(self, player):
+        if player.can_get_coins:
+            player.give_coin(1)
+        player.invCloak = False

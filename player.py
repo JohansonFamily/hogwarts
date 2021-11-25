@@ -77,8 +77,13 @@ class Player:
     def remove_coin(self, nbr):
         None
 
-    def end_turn(self, nbr):
+    def start_turn(self):
         None
+
+    def end_turn(self):
+        self.hand.clear()
+        for i in range(0,4):
+            self.draw_card()
 
     def play_card(self, card):
         card.use(self)
@@ -98,6 +103,7 @@ class Harry(Player):
         super().__init__()
         # Here we can continue to add sub-class specific attributes that do not apply to other players
         self.invCloak = True
+        self.deck.append(cards.InvisibilityCloak())
 
     # Redefining the same function as the parent over-rides the parent function.
     # All other players will use the parent function
