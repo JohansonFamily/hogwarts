@@ -4,6 +4,8 @@ import game
 root = Tk()
 root.title('Hogwarts Battle')
 root.geometry("1500x1000+100+100")
+# removes header
+# root.overrideredirect(True)
 # root.config(bg='white')
 
 # This function, tied to the escape key, will end the entire program

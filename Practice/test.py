@@ -1,4 +1,35 @@
 '''
+from tkinter import *
+from PIL import Image, ImageTk
+
+
+root = Tk()
+root.title("Game")
+
+
+frame = Frame(root)
+frame.pack()
+
+
+canvas = Canvas(frame, bg="black", width=700, height=400)
+canvas.pack()
+
+imgRaw = Image.open('images/bg.jpg')
+imgResized = imgRaw.resize((50, 50), Image.ANTIALIAS)
+imgProcessed = ImageTk.PhotoImage(imgResized)
+
+bg = Image.open("images/bg.jpg")
+background = ImageTk.PhotoImage(bg)
+canvas.create_image(350,200,image=background)
+
+character = Image.open('Practice/images/character.png')
+imgResized = ImageTk.PhotoImage(character.resize((50, 50), Image.ANTIALIAS))
+canvas.create_image(100,100,image=imgResized)
+
+root.mainloop()
+'''
+
+'''
 import tkinter as tk
 
 

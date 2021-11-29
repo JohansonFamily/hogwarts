@@ -2,39 +2,18 @@ import tkinter as tk
 from tkmacosx import Button
 from PIL import ImageTk, Image
 
-class Imgbutton(tk.Canvas):
+class Imgbutton:
 
-    def __init__(self, master=None, image=None, command=None, **kw):
+    def __init__(self, canvas, x, y, image, command=None):
 
-        # Declared style to keep a reference to the original relief
-        style = kw.get("relief", "groove")
+        self.canvas = canvas
+        self.x = x
+        self.y = y
+        self.image = image
+        self.command = command
 
-        if not kw.get('width') and image:
-            kw['width'] = image.width()
-        else: kw['width'] = 50
-
-        if not kw.get('height') and image:
-            kw['height'] = image.height()
-        else: kw['height'] = 24
-
-        kw['relief'] = style
-        kw['borderwidth'] = kw.get('borderwidth', 2)
-        kw['highlightthickness'] = kw.get('highlightthickness',0)
-
-        super(Imgbutton, self).__init__(master=master, **kw)
-
-        self.set_img = self.create_image(kw['borderwidth'], kw['borderwidth'],
-                anchor='nw', image=image)
-
-        self.bind_class( self, '<Button-1>',
-                    lambda _: self.config(relief='sunken'), add="+")
-
-        # Used the relief reference (style) to change back to original relief.
-        self.bind_class( self, '<ButtonRelease-1>',
-                    lambda _: self.config(relief=style), add='+')
-
-        self.bind_class( self, '<Button-1>',
-                    lambda _: command() if command else None, add="+")
+        img = self.canvas.create_image(self.x, self.y, image=self.image, anchor='nw')
+        mainCanvas.tag_bind(img, "<1>", self.command)
 
 def myfun(e):
     root.quit()
@@ -48,8 +27,8 @@ imgRaw = Image.open('images/bg.jpg')
 imgResized = imgRaw.resize((1500, 1000), Image.ANTIALIAS)
 imgProcessed = ImageTk.PhotoImage(imgResized)
 
-aimgRaw = Image.open('images/coin.jpg')
-aimgResized = aimgRaw.resize((50, 50), Image.ANTIALIAS)
+aimgRaw = Image.open('images/coin.png')
+aimgResized = aimgRaw.resize((50, 40), Image.ANTIALIAS)
 aimgProcessed = ImageTk.PhotoImage(aimgResized)
 
 # This function, tied to the escape key, will end the entire program
@@ -61,69 +40,34 @@ def escape(e):
 
 # This ties the escape key to ending the program
 root.bind("<Escape>", escape)
+root.grid_rowconfigure(0, weight=1)
+root.grid_rowconfigure(1, weight=1)
 
-frame = tk.Frame(root, width=1500, height=1000, background="white")
-frame.pack(fill='both', expand=True)
+topframe = tk.Frame(root, width=1500, height=1000)
+topframe.pack(fill='both', expand=True)
+#tk.Label(topframe, text="Hello World!").grid(row=0)
 
-bottomframe = tk.Frame(root, width=1500, height=1000, bg='red')
+# Display the image on a label
+label = tk.Label(topframe, image=aimgProcessed, pady=50, bg='#eeefff')
+# Set the label background color to a transparent color
+label.config(bg='#eeefff')
+label.pack()
+
+bottomframe = tk.Frame(root, width=1500, height=500, bg='systemTransparent')
 bottomframe.pack()
 
-mainCanvas=tk.Canvas(bottomframe, bg='white', height=1000, width=1500)
+mainCanvas=tk.Canvas(bottomframe, height=1000, width=1500)
 mainCanvas.place(x=0, y=0, anchor='nw')
-btn = tk.Button(bottomframe, image=aimgProcessed, command=root.quit, bd=0)
+btn = tk.Button(bottomframe, image=aimgProcessed, command=root.quit, bd=0, bg='#eeefff')
 mainCanvas.create_image(0,0,image=imgProcessed, anchor='nw')
 mainCanvas.create_image(200,100,image=aimgProcessed, anchor='nw')
 mainCanvas.create_text(200, 200, text="Some text", fill='white')
 mainCanvas.create_window(200,300, window=btn)
 img = mainCanvas.create_image(200,100,image=aimgProcessed, anchor='nw')
 mainCanvas.tag_bind(img, "<1>", myfun)
+coin = Imgbutton(mainCanvas, 200, 400, aimgProcessed)
 
+# img.config(bg='systemTransparent')
 
-
-'''
-lbl = tk.Label(bottomframe, image=imgProcessed)
-lbl.place(x=0,y=0)
-lbl.image = imgProcessed
-lbl=tk.Label(bottomframe, text='Hello World!', background='systemTransparent')
-lbl.place(x=200, y=200)
-'''
-
-def creatLayers(no_of_layers, max_nodes_in_each_layer, frame1=bottomframe):
-
-    listLayerRect=[]
-    listDelimiterRect=[]
-
-    #The canvas is created here.
-    mainCanvas=tk.Canvas(frame1, bg="white", height=1000, width=1000)
-    mainCanvas.pack(side='left')
-
-    for i in range (0,no_of_layers):
-
-        x=15*i
-
-        #rectangles that are being drawn on the canvas.
-        mainCanvas.create_polygon(x,0,x+10,0,x+10,1000,x,1000, outline='gray', fill='gray', width=2)
-
-#        listLayerRect.append(Tkinter.Canvas(frame1, bg="blue", height=1000, width=30))
-#        listDelimiterRect.append(Tkinter.Canvas(frame1, bg="yellow", height=1000, width=30))
-
-
-L1 = tk.Label(frame, text="Layers")
-E1 = tk.Entry(frame, bd =8)
-L2 = tk.Label(frame, text="Layers2")
-
-def helloCallBack(E=E1,):
-   # tkMessageBox.showinfo( "Hello Python", "Hello World")
-   k=int(E.get())
-   print(k)
-
-   creatLayers(k,k)
-
-B = tk.Button(frame, text ="Enter", command = helloCallBack)
-
-B.pack(side='left')
-#L1.pack(side=LEFT)
-E1.pack(side='left')
-#L2.pack(side=LEFT)
 
 root.mainloop()
