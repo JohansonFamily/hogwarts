@@ -155,7 +155,7 @@ class GameBoard:
         self.cardStore = CardStore(self.cardStoreFrame, game)
         self.villains = Villains(self.villainsFrame)
         self.playerList = PlayerList(self.playerListFrame, game)
-        self.activePlayer = ActivePlayer(self.activePlayerFrame, game, game.ap)
+        self.activePlayer = ActivePlayer(self.activePlayerFrame, game)
 
         # Place the objects on the game board
         self.setupGameBoard()
@@ -324,10 +324,9 @@ class PlayerList:
 
 class ActivePlayer:
 
-    def __init__(self, frame, game, ap):
+    def __init__(self, frame, game):
         self.frame = frame
         self.game = game
-        self.ap = ap
 
     def loadContent(self):
         for widget in self.frame.winfo_children():
@@ -339,6 +338,20 @@ class ActivePlayer:
         b2 = Button (self.frame, text = "Heal Player", width = 200, height = 100,
              bg = 'green', fg = 'white', command=lambda: self.heal(2))
         b2.grid(row=1)
+        for i in range(len(self.game.ap.deck)):
+            imgRaw = self.game.ap.deck[i].imageFile
+            imgResized = imgRaw.resize((90, 120), Image.ANTIALIAS)
+            imgProcessed = ImageTk.PhotoImage(imgResized)
+            img = tk.Button(self.frame, image=imgProcessed, bd=0,
+                            command=lambda i=i: self.use_card(self.game.ap.deck[i]))
+            img.image = imgProcessed
+            img.grid(row = 2, column=1+i)
+
+    def use_card(self, card):
+        card.use(self.game.ap)
+        self.game.ap.deck.remove(card)
+        self.game.gb.playerList.loadContent()
+        self.game.gb.activePlayer.loadContent()
 
 
     def damage(self, nbr):

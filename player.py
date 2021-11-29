@@ -26,7 +26,7 @@ class Player:
         self.can_get_coins = True
         self.can_get_zips = True
 
-        for i in range(0,5):
+        for i in range(0,7):
             self.deck.append(cards.Alohamora())
     # In this section, we setup actions that all players can do
 
