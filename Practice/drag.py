@@ -42,7 +42,7 @@ def escape(e):
 
 def on_click(event):
     selected = mainCanvas.find_overlapping(event.x-0, event.y-0, event.x+0, event.y+0)
-    if selected[-1] != 1:
+    if selected[-1] not in [bg, coin]:
         mainCanvas.selected = selected[-1]  # select the top-most item
         mainCanvas.startxy = (event.x, event.y)
         #print(mainCanvas.selected, mainCanvas.startxy)
@@ -77,8 +77,9 @@ root.grid_columnconfigure(0,weight=1)
 
 mainCanvas=tk.Canvas(root, height=1000, width=1500)
 mainCanvas.place(x=0, y=0, anchor='nw')
-mainCanvas.create_image(0,0,image=imgProcessed, anchor='nw')
+bg = mainCanvas.create_image(0,0,image=imgProcessed, anchor='nw')
 coin = mainCanvas.create_image(200,100,image=aimgProcessed, anchor='nw')
+coin2 = mainCanvas.create_image(500,100,image=aimgProcessed, anchor='nw')
 
 label = tk.Label(root, text="Hello World!")
 label.place(x=100, y=100, anchor='nw')

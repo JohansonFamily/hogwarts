@@ -15,6 +15,28 @@ class Imgbutton:
         img = self.canvas.create_image(self.x, self.y, image=self.image, anchor='nw')
         mainCanvas.tag_bind(img, "<1>", self.command)
 
+        mainCanvas.bind("<Button-1>", on_click)
+        mainCanvas.bind("<B1-Motion>", on_drag)
+
+    def click(self):
+        selected = mainCanvas.find_overlapping(event.x - 0, event.y - 0, event.x + 0, event.y + 0)
+        if selected[-1] != 1:
+            mainCanvas.selected = selected[-1]  # select the top-most item
+            mainCanvas.startxy = (event.x, event.y)
+            # print(mainCanvas.selected, mainCanvas.startxy)
+        else:
+            mainCanvas.selected = None
+
+    def on_drag(event):
+        if mainCanvas.selected:
+            # calculate distance moved from last position
+            dx, dy = event.x - mainCanvas.startxy[0], event.y - mainCanvas.startxy[1]
+            # move the selected item
+            mainCanvas.move(mainCanvas.selected, dx, dy)
+            # update last position
+            mainCanvas.startxy = (event.x, event.y)
+
+
 def myfun(e):
     root.quit()
 
