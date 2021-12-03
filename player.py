@@ -30,6 +30,18 @@ class Player:
             self.deck.append(cards.Alohamora())
     # In this section, we setup actions that all players can do
 
+		# Called at the end of each turn, where it draws 5 cards for the player
+		# This is hypothetical I'm a little unsure how to properly implement this
+		def new_hand(self):
+				if len(self.deck) < 5:
+						random.shuffle(self.discard_pile)
+						for i in range(len(self.discard_pile)):
+								self.deck.append(self.discard_pile[0])
+								self.discard_pile.remove(self.discard_pile[0])
+				for i in range(5):
+						self.hand.append(self.deck[0])
+						self.deck.remove(self.deck[0])
+		
     # Called whenever someone is allowed to draw a card
     def draw_card(self):
         # Copied this from the OG game.
