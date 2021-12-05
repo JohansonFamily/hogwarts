@@ -1,5 +1,5 @@
-import gui
-#import ui as gui
+#import gui
+import ui as gui
 import player
 import random
 import cards
