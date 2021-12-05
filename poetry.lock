@@ -1,0 +1,36 @@
+[[package]]
+name = "colour"
+version = "0.1.5"
+description = "converts and manipulates various color representation (HSL, RVB, web, X11, ...)"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.extras]
+test = ["nose"]
+
+[[package]]
+name = "tkmacosx"
+version = "1.0.3"
+description = "Tkmacosx is a Python library extension to the Tkinter module that let you change background color of the button on macOS."
+category = "main"
+optional = false
+python-versions = ">=3"
+
+[package.dependencies]
+colour = "*"
+
+[metadata]
+lock-version = "1.1"
+python-versions = "^3.8"
+content-hash = "f8d8191bc38bec1980b9afbee964e30464e152b85c9c89ed0abb6f6532056e36"
+
+[metadata.files]
+colour = [
+    {file = "colour-0.1.5-py2.py3-none-any.whl", hash = "sha256:33f6db9d564fadc16e59921a56999b79571160ce09916303d35346dddc17978c"},
+    {file = "colour-0.1.5.tar.gz", hash = "sha256:af20120fefd2afede8b001fbef2ea9da70ad7d49fafdb6489025dae8745c3aee"},
+]
+tkmacosx = [
+    {file = "tkmacosx-1.0.3-py3-none-any.whl", hash = "sha256:dae277a137e9a83aa0c2bedccfccd9925e686708cb83ecac7dbbe1f3d4850b69"},
+    {file = "tkmacosx-1.0.3.tar.gz", hash = "sha256:a2e58b557a4c283119a634e5de09c954a5742e777e6f8c7f5b3674f6d1f657df"},
+]
