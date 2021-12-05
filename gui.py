@@ -2,6 +2,8 @@ import tkinter as tk
 from tkmacosx import Button
 from PIL import ImageTk, Image
 import game
+import tkinter.messagebox as messagebox
+
 
 class StartingScreen:
     ### CONSTANTS ###
@@ -182,6 +184,7 @@ class GameBoard:
         self.playerListFrame.grid(row=1, rowspan=2, column=4, padx=10, sticky='NSEW')
         self.activePlayerFrame.grid(row=3, columnspan=5, padx=10, pady=10, sticky='NSEW')
 
+        messagebox.showinfo(title="My Title", message="Would you prefer to lose 2 hearts or discard a card?")
 
 class Header:
 

@@ -7,6 +7,7 @@ root.geometry("1500x1000+100+100")
 # removes header
 # root.overrideredirect(True)
 # root.config(bg='white')
+#iconphoto(True, tk.PhotoImage(file='img.png'))
 
 # This function, tied to the escape key, will end the entire program
 def escape(e):
