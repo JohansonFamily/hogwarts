@@ -2,7 +2,7 @@ from PIL import Image
 import random
 
 
-class Card:
+class HogwartsCard:
 
     def __init__(self):
 
@@ -16,7 +16,7 @@ class Card:
         self.available = False
 
 # These are specific sub-classes to the player class
-class Alohamora(Card):
+class Alohamora(HogwartsCard):
     name = "Alohamora"
     imageFile = Image.open('images/cards/alohamora.jpg')
 
@@ -28,8 +28,7 @@ class Alohamora(Card):
         if player.can_get_coins:
             player.give_coin(1)
 
-
-class Incendio(Card):
+class Incendio(HogwartsCard):
     name = "Incendio"
     imageFile = Image.open('images/cards/incendio.jpg')
 
@@ -44,7 +43,7 @@ class Incendio(Card):
             None
             # player.draw_card()
 
-class InvisibilityCloak(Card):
+class InvisibilityCloak(HogwartsCard):
     name = "Invisibility Cloak"
     imageFile = Image.open('images/players/harry/invisibility cloak.jpg')
 
@@ -56,3 +55,57 @@ class InvisibilityCloak(Card):
         if player.can_get_coins:
             player.give_coin(1)
         player.invCloak = False
+
+
+class VillainCard:
+    def __init__(self):
+        None
+
+class CrabbeAndGoyle(VillainCard):
+    name = "Crabbe and Goyle"
+    imageFile = Image.open('images/villians/crabbe and goyle.png')
+    description = "Each time a Dark Arts event or villain causes a Hero to discard a card, that Hero loses 1 Heart."
+    reward = "All Heroes draw a card."
+
+    def __init__(self):
+        None
+
+    def trigger(self):
+        # How do we know if this triggers
+        # determine then return whether or not it was triggered
+        return True
+
+    def use(self, player):
+        player.damage(1)
+
+    def reward(self, player):
+        player.draw_card()
+        # Need to do this for all players???
+
+
+class DarkArtsCard:
+    def __init__(self):
+        None
+
+class Expulso(DarkArtsCard):
+    name = "Expulso"
+    imageFile = Image.open('images/dark arts/expulso.png')
+    description = "Active Hero loses 2 Hearts."
+
+    def __init__(self):
+        None
+
+    def use(self, game):
+        game.ap.damage(2)
+
+class Flipendo(DarkArtsCard):
+    name = "Flipendo"
+    imageFile = Image.open('images/dark arts/flipendo.png')
+    description = "Active Hero loses 1 Heart and discards a card."
+
+    def __init__(self):
+        None
+
+    def use(self, game):
+        game.ap.damage(1)
+

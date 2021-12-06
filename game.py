@@ -48,7 +48,8 @@ class Game:
         self.ap = players[0]
         self.cardDeck = self.getCardDeck()
 
-        # self.villains = Villains()
+        self.villainDeck = self.getVillianDeck()
+        self.darkArtsDeck = self.getDarkArtsDeck()
         # self.locations = Locations()
         # self.darkArts = DarkArts()
 
@@ -75,6 +76,30 @@ class Game:
             cardDeck.append(cards.Alohamora())
             cardDeck.append(cards.Incendio())
         random.shuffle(cardDeck)
+        return cardDeck
+
+    def getVillianDeck(self):
+        # Set up cards available in the store
+        cardDeck = []
+
+        cardDeck.append(cards.CrabbeAndGoyle())
+        cardDeck.append(cards.CrabbeAndGoyle())
+
+        random.shuffle(cardDeck)
+
+        return cardDeck
+
+    def getDarkArtsDeck(self):
+        # Set up cards available in the store
+        cardDeck = []
+
+        cardDeck.append(cards.Expulso())
+        cardDeck.append(cards.Expulso())
+        cardDeck.append(cards.Flipendo())
+        cardDeck.append(cards.Flipendo())
+
+        random.shuffle(cardDeck)
+
         return cardDeck
 
     def enterNext(self, e):

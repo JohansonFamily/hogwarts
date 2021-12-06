@@ -2,6 +2,7 @@ import tkinter as tk
 from tkmacosx import Button
 from PIL import ImageTk, Image
 import game
+import random
 import tkinter.messagebox as messagebox
 
 
@@ -143,17 +144,17 @@ class GameBoard:
 
         # Create frames for each section
         self.headerFrame = tk.LabelFrame(self.parentFrame, text="Header")
-        self.locationFrame = tk.LabelFrame(self.parentFrame, text='Locations')
-        self.darkArtsFrame = tk.LabelFrame(self.parentFrame, text="Dark Arts")
+        self.locationFrame = tk.Frame(self.parentFrame)
+        self.darkArtsFrame = tk.Frame(self.parentFrame)
         self.cardStoreFrame = tk.LabelFrame(self.parentFrame, text="Card Store")
-        self.villainsFrame = tk.LabelFrame(self.parentFrame, text="Villains")
+        self.villainsFrame = tk.Frame(self.parentFrame)
         self.playerListFrame = tk.Frame(self.parentFrame)
         self.activePlayerFrame = tk.LabelFrame(self.parentFrame, text="Active Player")
 
         # Create objects for each section and pass in frame and appropriate data
         self.header = Header(self.headerFrame)
         self.location = Location(self.locationFrame)
-        self.darkArts = DarkArts(self.darkArtsFrame)
+        self.darkArts = DarkArts(self.darkArtsFrame, game)
         self.cardStore = CardStore(self.cardStoreFrame, game)
         self.villains = Villains(self.villainsFrame)
         self.playerList = PlayerList(self.playerListFrame, game)
@@ -202,22 +203,56 @@ class Location:
 
     def loadContent(self):
         imgRaw = Image.open('images/location1.png')
-        imgResized = imgRaw.resize((200, 120), Image.ANTIALIAS)
+        imgResized = imgRaw.resize((220, 132), Image.ANTIALIAS)
         imgProcessed = ImageTk.PhotoImage(imgResized)
 
         imgLocation = tk.Label(self.frame, image=imgProcessed, padx=10)
         imgLocation.image = imgProcessed
-        imgLocation.grid(row=0)
+        imgLocation.grid(row=0, padx=10, pady=10)
 
 
 class DarkArts:
 
-    def __init__(self, frame):
+    def __init__(self, frame, game):
         self.frame = frame
+        self.game = game
+        self.draw = self.game.darkArtsDeck
+        self.discard = []
 
     def loadContent(self):
+        imgRaw = Image.open('images/cards/DarkArtsCardback.jpeg')
+        imgResized = imgRaw.resize((140, 140), Image.ANTIALIAS)
+        imgProcessed = ImageTk.PhotoImage(imgResized)
 
-        tk.Label(self.frame, text="Dark Arts Events").grid(row=0)
+        # draw pile
+        imgLocation = tk.Button(self.frame, image=imgProcessed, command=lambda: self.draw_card(self.game))
+        imgLocation.image = imgProcessed
+        imgLocation.grid(row=0, column=0, padx=10, pady=10)
+
+        # discard pile
+        if len(self.discard) == 0:
+            imgFile = imgRaw
+        else:
+            imgFile = self.discard[len(self.discard)-1].imageFile
+
+        imgResized = imgFile.resize((140, 140), Image.ANTIALIAS)
+        imgProcessed = ImageTk.PhotoImage(imgResized)
+        imgDarkArts = tk.Label(self.frame, image=imgProcessed)
+        imgDarkArts.image = imgProcessed
+        imgDarkArts.grid(row=0, column=1, padx=10, pady=10)
+
+    def draw_card(self, game):
+        if len(self.draw) == 0:
+            self.draw = self.discard.copy()
+            self.discard.clear()
+            random.shuffle(self.draw)
+        self.discard.append(self.draw[0])
+        self.draw[0].use(game)
+        self.draw.remove(self.draw[0])
+        self.loadContent()
+        self.game.gb.playerList.loadContent()
+        self.game.gb.activePlayer.loadContent()
+
 
 
 class CardStore:
@@ -265,10 +300,32 @@ class Villains:
 
     def __init__(self, frame):
         self.frame = frame
+        self.deck = []
+
+
 
     def loadContent(self):
+        imgRaw = Image.open('images/cards/VillainCardback.jpeg')
+        imgResized = imgRaw.resize((180, 100), Image.ANTIALIAS)
+        imgProcessed = ImageTk.PhotoImage(imgResized)
 
-        tk.Label(self.frame, text="This is for the Villains!").grid(row=0)
+
+
+        imgVillain = tk.Label(self.frame, image=imgProcessed)
+        imgVillain.image = imgProcessed
+        imgVillain.grid(row=0, column=0, padx=10, pady=10)
+        imgVillain = tk.Label(self.frame, image=imgProcessed)
+        imgVillain.image = imgProcessed
+        imgVillain.grid(row=0, column=2, padx=10, pady=10)
+        imgVillain = tk.Label(self.frame, image=imgProcessed)
+        imgVillain.image = imgProcessed
+        imgVillain.grid(row=1, column=0, padx=10, pady=10)
+        imgVillain = tk.Label(self.frame, image=imgProcessed)
+        imgVillain.image = imgProcessed
+        imgVillain.grid(row=1, column=1, padx=10, pady=10)
+        imgVillain = tk.Label(self.frame, image=imgProcessed)
+        imgVillain.image = imgProcessed
+        imgVillain.grid(row=1, column=2, padx=10, pady=10)
 
 
 class PlayerList:
@@ -318,7 +375,7 @@ class PlayerList:
                 zip = tk.Label(self.lblFrame[i], image=zipProcessed)
                 zip.image = zipProcessed
                 zip.grid(row=2, column=j+1)
-            frmCards = tk.Frame(self.lblFrame[i], width=500, height=90)
+            frmCards = tk.Frame(self.lblFrame[i], width=300, height=80)
             frmCards.grid(row=0, rowspan=3, column=12)
             frmCards.grid_columnconfigure(0, weight=1)
             frmCards.grid_rowconfigure(0, weight=1)
@@ -333,7 +390,7 @@ class PlayerList:
                 imgProcessed = ImageTk.PhotoImage(imgResized)
                 img = tk.Label(frmCards, image=imgProcessed, bd=0)
                 img.image = imgProcessed
-                img.place(x=50+30*k, y=0)
+                img.place(x=50+20*k, y=0)
 
     def selectPlayer(self, e):
 

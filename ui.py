@@ -319,8 +319,7 @@ class PlayerList:
                 imgRaw = self.game.ap.deck[i].imageFile
                 imgResized = imgRaw.resize((30, 40), Image.ANTIALIAS)
                 imgProcessed = ImageTk.PhotoImage(imgResized)
-                img = tk.Button(self.frame, image=imgProcessed, bd=0,
-                                command=lambda i=i: self.use_card(self.game.ap.deck[i]))
+                img = tk.Label(self.frame, image=imgProcessed, bd=0)
                 img.image = imgProcessed
                 img.place(x=300 + 20 * i, y=300)
 
