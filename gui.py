@@ -158,6 +158,7 @@ class GameBoard:
         self.villains = Villains(self.villainsFrame)
         self.playerList = PlayerList(self.playerListFrame, game)
         self.activePlayer = ActivePlayer(self.activePlayerFrame, game)
+        self.pu = PopUp(game)
 
         # Place the objects on the game board
         self.setupGameBoard()
@@ -184,7 +185,6 @@ class GameBoard:
         self.playerListFrame.grid(row=1, rowspan=2, column=4, padx=10, sticky='NSEW')
         self.activePlayerFrame.grid(row=3, columnspan=5, padx=10, pady=10, sticky='NSEW')
 
-        messagebox.showinfo(title="My Title", message="Would you prefer to lose 2 hearts or discard a card?")
 
 class Header:
 
@@ -201,7 +201,13 @@ class Location:
         self.frame = frame
 
     def loadContent(self):
-        tk.Label(self.frame, text='').grid(row=0)
+        imgRaw = Image.open('images/location1.png')
+        imgResized = imgRaw.resize((200, 120), Image.ANTIALIAS)
+        imgProcessed = ImageTk.PhotoImage(imgResized)
+
+        imgLocation = tk.Label(self.frame, image=imgProcessed, padx=10)
+        imgLocation.image = imgProcessed
+        imgLocation.grid(row=0)
 
 
 class DarkArts:
@@ -312,6 +318,22 @@ class PlayerList:
                 zip = tk.Label(self.lblFrame[i], image=zipProcessed)
                 zip.image = zipProcessed
                 zip.grid(row=2, column=j+1)
+            frmCards = tk.Frame(self.lblFrame[i], width=500, height=90)
+            frmCards.grid(row=0, rowspan=3, column=12)
+            frmCards.grid_columnconfigure(0, weight=1)
+            frmCards.grid_rowconfigure(0, weight=1)
+            frmCards.grid_propagate(0)
+
+            lblCards = tk.Label(frmCards, text="  Cards in Hand: ", padx=5)
+            #lblCards.pack()
+            lblCards.place()
+            for k in range(len(self.game.players[i].deck)):
+                imgRaw = self.game.players[i].deck[k].imageFile
+                imgResized = imgRaw.resize((60, 80), Image.ANTIALIAS)
+                imgProcessed = ImageTk.PhotoImage(imgResized)
+                img = tk.Label(frmCards, image=imgProcessed, bd=0)
+                img.image = imgProcessed
+                img.place(x=50+30*k, y=0)
 
     def selectPlayer(self, e):
 
@@ -338,9 +360,14 @@ class ActivePlayer:
         b1 = Button(self.frame, text="Hurt Player", width=200, height=100, bg='red',
              fg="white", command=lambda: self.damage(2))
         b1.grid(row=0)
-        b2 = Button (self.frame, text = "Heal Player", width = 200, height = 100,
-             bg = 'green', fg = 'white', command=lambda: self.heal(2))
+        b2 = Button(self.frame, text="Heal Player", width=200, height=100,
+                    bg='green', fg='white', command=lambda: self.heal(2))
         b2.grid(row=1)
+
+        b3 = Button(self.frame, text="Popup", width=200, height=100,
+                    bg='blue', fg='white', command=lambda: self.game.gb.pu.popUpCard())
+        b3.grid(row=2, column=0)
+
         for i in range(len(self.game.ap.deck)):
             imgRaw = self.game.ap.deck[i].imageFile
             imgResized = imgRaw.resize((90, 120), Image.ANTIALIAS)
@@ -356,7 +383,6 @@ class ActivePlayer:
         self.game.gb.playerList.loadContent()
         self.game.gb.activePlayer.loadContent()
 
-
     def damage(self, nbr):
         self.game.ap.damage(nbr)
         self.game.gb.playerList.loadContent()
@@ -364,3 +390,31 @@ class ActivePlayer:
     def heal(self,nbr):
         self.game.ap.heal(nbr)
         self.game.gb.playerList.loadContent()
+
+
+class PopUp:
+
+    def __init__(self, game):
+        self.game = game
+
+    def popUpCard(self):
+        # Toplevel object which will
+        # be treated as a new window
+        newWindow = tk.Toplevel(self.game.root)
+
+        # sets the title of the
+        # Toplevel widget
+        newWindow.title("Choose")
+
+        # sets the geometry of toplevel
+        newWindow.geometry("300x300+600+500")
+        newWindow.grid_columnconfigure(0, weight=1)
+        newWindow.grid_columnconfigure(1, weight=1)
+        lbl = tk.Label(newWindow, text="Would you prefer to lose 2 hearts or discard a card?", wraplength=260, padx=20, pady=20)
+        lbl.grid(row=0, columnspan=2)
+        b1 = tk.Button(newWindow, text="Lose 2 hearts")
+        b1.grid(row=1, column=0)
+        b2 = tk.Button(newWindow, text="Discard a card")
+        b2.grid(row=1, column=1)
+
+
