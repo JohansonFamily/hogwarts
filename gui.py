@@ -156,7 +156,7 @@ class GameBoard:
         self.location = Location(self.locationFrame)
         self.darkArts = DarkArts(self.darkArtsFrame, game)
         self.cardStore = CardStore(self.cardStoreFrame, game)
-        self.villains = Villains(self.villainsFrame)
+        self.villains = Villains(self.villainsFrame, game)
         self.playerList = PlayerList(self.playerListFrame, game)
         self.activePlayer = ActivePlayer(self.activePlayerFrame, game)
         self.pu = PopUp(game)
@@ -249,6 +249,7 @@ class DarkArts:
         self.discard.append(self.draw[0])
         self.draw[0].use(game)
         self.draw.remove(self.draw[0])
+        self.game.dark_arts_is_done = True
         self.loadContent()
         self.game.gb.playerList.loadContent()
         self.game.gb.activePlayer.loadContent()
@@ -291,41 +292,42 @@ class CardStore:
 
     # This is what is called if someone clicks on the card
     def use_card(self, card):
-        card.use(self.game.ap)
+        self.game.ap.buy_card(card)
         self.game.gb.playerList.loadContent()
         self.game.gb.activePlayer.loadContent()
 
 
 class Villains:
 
-    def __init__(self, frame):
+    def __init__(self, frame, game):
         self.frame = frame
+        self.game = game
         self.deck = []
-
-
 
     def loadContent(self):
         imgRaw = Image.open('images/cards/VillainCardback.jpeg')
-        imgResized = imgRaw.resize((180, 100), Image.ANTIALIAS)
+        imgResized = imgRaw.resize((180, 120), Image.ANTIALIAS)
         imgProcessed = ImageTk.PhotoImage(imgResized)
 
+        imgVillianRaw = Image.open('images/villians/crabbeandgoyle2.png')
+        imgVillianResized = imgVillianRaw.resize((180, 120), Image.ANTIALIAS)
+        imgVillianProcessed = ImageTk.PhotoImage(imgVillianResized)
 
-
         imgVillain = tk.Label(self.frame, image=imgProcessed)
         imgVillain.image = imgProcessed
-        imgVillain.grid(row=0, column=0, padx=10, pady=10)
+        imgVillain.grid(row=0, column=0, padx=10, pady=5)
         imgVillain = tk.Label(self.frame, image=imgProcessed)
         imgVillain.image = imgProcessed
-        imgVillain.grid(row=0, column=2, padx=10, pady=10)
+        imgVillain.grid(row=0, column=2, padx=10, pady=5)
+        imgVillain = tk.Label(self.frame, image=imgVillianProcessed)
+        imgVillain.image = imgVillianProcessed
+        imgVillain.grid(row=1, column=0, padx=10, pady=5)
         imgVillain = tk.Label(self.frame, image=imgProcessed)
         imgVillain.image = imgProcessed
-        imgVillain.grid(row=1, column=0, padx=10, pady=10)
+        imgVillain.grid(row=1, column=1, padx=10, pady=5)
         imgVillain = tk.Label(self.frame, image=imgProcessed)
         imgVillain.image = imgProcessed
-        imgVillain.grid(row=1, column=1, padx=10, pady=10)
-        imgVillain = tk.Label(self.frame, image=imgProcessed)
-        imgVillain.image = imgProcessed
-        imgVillain.grid(row=1, column=2, padx=10, pady=10)
+        imgVillain.grid(row=1, column=2, padx=10, pady=5)
 
 
 class PlayerList:
@@ -384,8 +386,8 @@ class PlayerList:
             lblCards = tk.Label(frmCards, text="  Cards in Hand: ", padx=5)
             #lblCards.pack()
             lblCards.place()
-            for k in range(len(self.game.players[i].deck)):
-                imgRaw = self.game.players[i].deck[k].imageFile
+            for k in range(len(self.game.players[i].hand)):
+                imgRaw = self.game.players[i].hand[k].imageFile
                 imgResized = imgRaw.resize((60, 80), Image.ANTIALIAS)
                 imgProcessed = ImageTk.PhotoImage(imgResized)
                 img = tk.Label(frmCards, image=imgProcessed, bd=0)
@@ -425,20 +427,20 @@ class ActivePlayer:
                     bg='blue', fg='white', command=lambda: self.game.gb.pu.popUpCard())
         b3.grid(row=2, column=0)
 
-        for i in range(len(self.game.ap.deck)):
-            imgRaw = self.game.ap.deck[i].imageFile
-            imgResized = imgRaw.resize((90, 120), Image.ANTIALIAS)
+        for i in range(len(self.game.ap.hand)):
+            imgRaw = self.game.ap.hand[i].imageFile
+            imgResized = imgRaw.resize((120, 160), Image.ANTIALIAS)
             imgProcessed = ImageTk.PhotoImage(imgResized)
             img = tk.Button(self.frame, image=imgProcessed, bd=0,
-                            command=lambda i=i: self.use_card(self.game.ap.deck[i]))
+                            command=lambda i=i: self.use_card(self.game.ap.hand[i]))
             img.image = imgProcessed
             img.grid(row = 2, column=1+i)
 
     def use_card(self, card):
-        card.use(self.game.ap)
-        self.game.ap.deck.remove(card)
-        self.game.gb.playerList.loadContent()
-        self.game.gb.activePlayer.loadContent()
+        if self.game.dark_arts_is_done:
+            self.game.ap.play_card(card)
+            self.game.gb.playerList.loadContent()
+            self.game.gb.activePlayer.loadContent()
 
     def damage(self, nbr):
         self.game.ap.damage(nbr)

@@ -11,7 +11,7 @@ class HogwartsCard:
         self.available = True
 
     def buyCard(self, player):
-        player.removeCoin(self.cost)
+        player.remove_coin(self.cost)
         self.inStore = False
         self.available = False
 
@@ -40,8 +40,7 @@ class Incendio(HogwartsCard):
         if player.can_get_zips:
             player.give_zip(1)
         if player.can_draw_cards:
-            None
-            # player.draw_card()
+            player.draw_card()
 
 class InvisibilityCloak(HogwartsCard):
     name = "Invisibility Cloak"

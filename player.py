@@ -28,6 +28,8 @@ class Player:
 
         for i in range(0,7):
             self.deck.append(cards.Alohamora())
+
+        self.new_hand()
     # In this section, we setup actions that all players can do
 
 	# Called at the end of each turn, where it draws 5 cards for the player
@@ -47,7 +49,7 @@ class Player:
         # Copied this from the OG game.
         if self.can_draw_cards:
             if len(self.deck) == 0:
-                self.deck = self.discard_pile
+                self.deck = self.discard_pile.copy()
                 self.discard_pile.clear()
                 random.shuffle(self.deck)
             self.hand.append(self.deck[0])
@@ -87,7 +89,7 @@ class Player:
         self.coins += 1
 
     def remove_coin(self, nbr):
-        None
+        self.coins -=nbr
 
     def start_turn(self):
         None
@@ -99,6 +101,14 @@ class Player:
 
     def play_card(self, card):
         card.use(self)
+        self.discard_pile.append(card)
+        self.hand.remove(card)
+
+    def buy_card(self, card):
+        if self.coins >= card.cost:
+            self.remove_coin(card.cost)
+            self.discard_pile.append(card)
+
 
 
 # These are specific sub-classes to the player class

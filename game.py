@@ -50,6 +50,7 @@ class Game:
 
         self.villainDeck = self.getVillianDeck()
         self.darkArtsDeck = self.getDarkArtsDeck()
+        self.dark_arts_is_done = False
         # self.locations = Locations()
         # self.darkArts = DarkArts()
 
@@ -104,10 +105,13 @@ class Game:
 
     def enterNext(self, e):
         # This is the function from the enter key to change turns
-        self.nextTurn()
+        if self.ap.hand == []:
+            self.nextTurn()
 
     def nextTurn(self):
         # change person's turn
+        self.dark_arts_is_done = False
+        self.ap.new_hand()
         self.ap = self.players[(self.players.index(self.ap)+1) % len(self.players)]
         self.gb.activePlayer.loadContent()
         self.gb.playerList.loadContent()
