@@ -143,7 +143,7 @@ class GameBoard:
         self.parentFrame.grid_propagate(0)
 
         # Create frames for each section
-        self.headerFrame = tk.LabelFrame(self.parentFrame, text="Header")
+        self.headerFrame = tk.Frame(self.parentFrame)
         self.locationFrame = tk.Frame(self.parentFrame)
         self.darkArtsFrame = tk.Frame(self.parentFrame)
         self.cardStoreFrame = tk.LabelFrame(self.parentFrame, text="Card Store")
@@ -152,14 +152,14 @@ class GameBoard:
         self.activePlayerFrame = tk.LabelFrame(self.parentFrame, text="Active Player")
 
         # Create objects for each section and pass in frame and appropriate data
-        self.header = Header(self.headerFrame)
+        self.header = Header(self.headerFrame, game)
         self.location = Location(self.locationFrame)
         self.darkArts = DarkArts(self.darkArtsFrame, game)
         self.cardStore = CardStore(self.cardStoreFrame, game)
         self.villains = Villains(self.villainsFrame, game)
         self.playerList = PlayerList(self.playerListFrame, game)
         self.activePlayer = ActivePlayer(self.activePlayerFrame, game)
-        self.pu = PopUp(game)
+
 
         # Place the objects on the game board
         self.setupGameBoard()
@@ -187,13 +187,32 @@ class GameBoard:
         self.activePlayerFrame.grid(row=3, columnspan=5, padx=10, pady=10, sticky='NSEW')
 
 
+
+
 class Header:
 
     # This is for any admin function.  I am thinking save game or next turn???
-    def __init__(self,frame):
+    def __init__(self,frame,game):
         self.frame = frame
+        self.game = game
+        self.frame.grid_columnconfigure(0, weight=1)
+        self.btn = tk.Button(self.frame, text='Next Turn', command=lambda: self.nextTurn())
         self.lbl = tk.Label(self.frame, text="Header information to go here.")
-        self.lbl.grid(row=0,column=0)
+        self.btn.grid(row=0,column=0, sticky='e')
+        self.game.root.bind('<Return>', self.enterNext)
+
+    def enterNext(self, e):
+        # This is the function from the enter key to change turns
+        if self.game.ap.hand == []:
+            self.nextTurn()
+
+    def nextTurn(self):
+        # change person's turn
+        self.game.dark_arts_is_done = False
+        self.game.ap.end_turn()
+        self.game.ap = self.game.players[(self.game.players.index(self.game.ap) + 1) % len(self.game.players)]
+        self.game.gb.activePlayer.loadContent()
+        self.game.gb.playerList.loadContent()
 
 
 class Location:
@@ -220,7 +239,7 @@ class DarkArts:
         self.discard = []
 
     def loadContent(self):
-        imgRaw = Image.open('images/cards/DarkArtsCardback.jpeg')
+        imgRaw = Image.open('images/dark arts/DarkArtsCardback.jpeg')
         imgResized = imgRaw.resize((140, 140), Image.ANTIALIAS)
         imgProcessed = ImageTk.PhotoImage(imgResized)
 
@@ -229,9 +248,10 @@ class DarkArts:
         imgLocation.image = imgProcessed
         imgLocation.grid(row=0, column=0, padx=10, pady=10)
 
+
         # discard pile
         if len(self.discard) == 0:
-            imgFile = imgRaw
+            imgFile = Image.open('images/FrameRoundedCorners.jpeg')
         else:
             imgFile = self.discard[len(self.discard)-1].imageFile
 
@@ -242,18 +262,18 @@ class DarkArts:
         imgDarkArts.grid(row=0, column=1, padx=10, pady=10)
 
     def draw_card(self, game):
-        if len(self.draw) == 0:
-            self.draw = self.discard.copy()
-            self.discard.clear()
-            random.shuffle(self.draw)
-        self.discard.append(self.draw[0])
-        self.draw[0].use(game)
-        self.draw.remove(self.draw[0])
-        self.game.dark_arts_is_done = True
-        self.loadContent()
-        self.game.gb.playerList.loadContent()
-        self.game.gb.activePlayer.loadContent()
-
+        if not self.game.dark_arts_is_done:
+            if len(self.draw) == 0:
+                self.draw = self.discard.copy()
+                self.discard.clear()
+                random.shuffle(self.draw)
+            self.discard.append(self.draw[0])
+            self.draw[0].use(game)
+            self.draw.remove(self.draw[0])
+            self.game.dark_arts_is_done = True
+            self.loadContent()
+            self.game.gb.playerList.loadContent()
+            self.game.gb.activePlayer.loadContent()
 
 
 class CardStore:
@@ -264,6 +284,7 @@ class CardStore:
 
     def loadContent(self):
         deck = self.game.cardDeck
+
         # layout cards
         for i in range(0,6):
             # Pull the image file from the card object, resize it to what we want, then use a button to display
@@ -272,7 +293,7 @@ class CardStore:
             imgProcessed = ImageTk.PhotoImage(imgResized)
             img=tk.Button(self.frame, image=imgProcessed, bd=0,
 #                       focuscolor='systemWindowBackgroundColor', activebackground='systemWindowBackgroundColor',
-                       command=lambda i=i: self.use_card(deck[i]))
+                       command=lambda i=i: self.buy_card(deck[i]))
             img.image=imgProcessed
             img.grid(row=i//2,column=i%2,padx=5,pady=5)
             img.bind("<Enter>", lambda event, i=imgRaw: self.show_card(event, i))
@@ -291,8 +312,9 @@ class CardStore:
 
 
     # This is what is called if someone clicks on the card
-    def use_card(self, card):
-        self.game.ap.buy_card(card)
+    def buy_card(self, card):
+        self.game.ap.buy_card(card, self.game.cardDeck)
+        self.loadContent()
         self.game.gb.playerList.loadContent()
         self.game.gb.activePlayer.loadContent()
 
@@ -316,12 +338,18 @@ class Villains:
         imgVillain = tk.Label(self.frame, image=imgProcessed)
         imgVillain.image = imgProcessed
         imgVillain.grid(row=0, column=0, padx=10, pady=5)
-        imgVillain = tk.Label(self.frame, image=imgProcessed)
-        imgVillain.image = imgProcessed
-        imgVillain.grid(row=0, column=2, padx=10, pady=5)
+
         imgVillain = tk.Label(self.frame, image=imgVillianProcessed)
         imgVillain.image = imgVillianProcessed
         imgVillain.grid(row=1, column=0, padx=10, pady=5)
+
+        imgRaw = Image.open('images/FrameRoundedCorners.jpeg')
+        imgResized = imgRaw.resize((180, 120), Image.ANTIALIAS)
+        imgProcessed = ImageTk.PhotoImage(imgResized)
+
+        imgVillain = tk.Label(self.frame, image=imgProcessed)
+        imgVillain.image = imgProcessed
+        imgVillain.grid(row=0, column=2, padx=10, pady=5)
         imgVillain = tk.Label(self.frame, image=imgProcessed)
         imgVillain.image = imgProcessed
         imgVillain.grid(row=1, column=1, padx=10, pady=5)
@@ -438,7 +466,7 @@ class ActivePlayer:
 
     def use_card(self, card):
         if self.game.dark_arts_is_done:
-            self.game.ap.play_card(card)
+            self.game.ap.play_card(card, self.game)
             self.game.gb.playerList.loadContent()
             self.game.gb.activePlayer.loadContent()
 
@@ -451,15 +479,15 @@ class ActivePlayer:
         self.game.gb.playerList.loadContent()
 
 
-class PopUp:
+class PU_Dittany:
+    def __init__(self, root):
+        self.root = root
 
-    def __init__(self, game):
-        self.game = game
+    def show(self):
 
-    def popUpCard(self):
         # Toplevel object which will
         # be treated as a new window
-        newWindow = tk.Toplevel(self.game.root)
+        newWindow = tk.Toplevel(self.root)
 
         # sets the title of the
         # Toplevel widget
@@ -469,11 +497,18 @@ class PopUp:
         newWindow.geometry("300x300+600+500")
         newWindow.grid_columnconfigure(0, weight=1)
         newWindow.grid_columnconfigure(1, weight=1)
-        lbl = tk.Label(newWindow, text="Would you prefer to lose 2 hearts or discard a card?", wraplength=260, padx=20, pady=20)
+
+        lbl = tk.Label(newWindow, text="Would you prefer to lose 2 hearts or discard a card?", wraplength=260, padx=20,
+                       pady=20)
         lbl.grid(row=0, columnspan=2)
-        b1 = tk.Button(newWindow, text="Lose 2 hearts")
+        b1 = tk.Button(newWindow, text="Lose 2 hearts", command=lambda: self.loseHearts())
         b1.grid(row=1, column=0)
-        b2 = tk.Button(newWindow, text="Discard a card")
+        b2 = tk.Button(newWindow, text="Discard a card", command=lambda: self.discard())
         b2.grid(row=1, column=1)
 
+    def loseHearts(self):
+        return 'lose hearts'
+
+    def discard(self):
+        return 'discard'
 

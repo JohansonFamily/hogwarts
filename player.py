@@ -86,28 +86,35 @@ class Player:
         None
 
     def give_coin(self, nbr):
-        self.coins += 1
+        self.coins += nbr
 
     def remove_coin(self, nbr):
-        self.coins -=nbr
+        self.coins -= nbr
 
     def start_turn(self):
         None
 
     def end_turn(self):
+
+        self.coins = 0
+        self.zips = 0
         self.hand.clear()
-        for i in range(0,4):
+        for i in range(0,5):
             self.draw_card()
 
-    def play_card(self, card):
-        card.use(self)
+
+    def play_card(self, card, game):
+        card.use(game)
         self.discard_pile.append(card)
         self.hand.remove(card)
 
-    def buy_card(self, card):
+    def buy_card(self, card, deck):
         if self.coins >= card.cost:
             self.remove_coin(card.cost)
             self.discard_pile.append(card)
+            deck.remove(card)
+
+
 
 
 

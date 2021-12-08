@@ -57,9 +57,6 @@ class Game:
         # One attribute of the game is the gameboard object.  All screen changes go through this gameboard.
         self.gb = gui.GameBoard(self)
 
-        # Bind the enter key to the next turn function
-        self.root.bind('<Return>', self.enterNext)
-
 
     def load_data(self):
         # Loads all data on the screen
@@ -73,9 +70,15 @@ class Game:
     def getCardDeck(self):
         # Set up cards available in the store
         cardDeck = []
-        for i in range(0,6):
-            cardDeck.append(cards.Alohamora())
-            cardDeck.append(cards.Incendio())
+
+        self.addToDeck(cardDeck,cards.Reparo(),4)
+        self.addToDeck(cardDeck,cards.Incendio(),3)
+        self.addToDeck(cardDeck,cards.SortingHat(),4)
+        self.addToDeck(cardDeck,cards.Lumos(),3)
+        self.addToDeck(cardDeck,cards.QuidditchGear(),4)
+        self.addToDeck(cardDeck,cards.Hagrid(),4)
+        self.addToDeck(cardDeck,cards.Dittany(),3)
+
         random.shuffle(cardDeck)
         return cardDeck
 
@@ -94,24 +97,17 @@ class Game:
         # Set up cards available in the store
         cardDeck = []
 
-        cardDeck.append(cards.Expulso())
-        cardDeck.append(cards.Expulso())
-        cardDeck.append(cards.Flipendo())
-        cardDeck.append(cards.Flipendo())
+        for i in range(0,2):
+            cardDeck.append(cards.Expulso())
+            cardDeck.append(cards.Petrification())
+            cardDeck.append(cards.Flipendo())
+            cardDeck.append(cards.Hwmnbn())
+
 
         random.shuffle(cardDeck)
 
         return cardDeck
 
-    def enterNext(self, e):
-        # This is the function from the enter key to change turns
-        if self.ap.hand == []:
-            self.nextTurn()
-
-    def nextTurn(self):
-        # change person's turn
-        self.dark_arts_is_done = False
-        self.ap.new_hand()
-        self.ap = self.players[(self.players.index(self.ap)+1) % len(self.players)]
-        self.gb.activePlayer.loadContent()
-        self.gb.playerList.loadContent()
+    def addToDeck(self, deck, card, nbr):
+        for i in range(0,nbr):
+            deck.append(card)

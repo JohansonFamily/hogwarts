@@ -1,6 +1,8 @@
 from PIL import Image
 import random
 
+import gui
+
 
 class HogwartsCard:
 
@@ -10,7 +12,7 @@ class HogwartsCard:
         self.inStore = False
         self.available = True
 
-    def buyCard(self, player):
+    def buy_card(self, player):
         player.remove_coin(self.cost)
         self.inStore = False
         self.available = False
@@ -19,28 +21,55 @@ class HogwartsCard:
 class Alohamora(HogwartsCard):
     name = "Alohamora"
     imageFile = Image.open('images/cards/alohamora.jpg')
+    description = "Gain 1 Coin."
 
     def __init__(self):
         super().__init__()
         self.cost = 0
 
-    def use(self, player):
-        if player.can_get_coins:
-            player.give_coin(1)
+    def use(self, game):
+        if game.ap.can_get_coins:
+            game.ap.give_coin(1)
 
 class Incendio(HogwartsCard):
     name = "Incendio"
     imageFile = Image.open('images/cards/incendio.jpg')
+    description = "Gain 1 Zip-zap.  Draw a card."
 
     def __init__(self):
         super().__init__()
         self.cost = 4
 
-    def use(self, player):
-        if player.can_get_zips:
-            player.give_zip(1)
-        if player.can_draw_cards:
-            player.draw_card()
+    def use(self, game):
+        if game.ap.can_get_zips:
+            game.ap.give_zip(1)
+        if game.ap.can_draw_cards:
+            game.ap.draw_card()
+
+class Reparo(HogwartsCard):
+    name = "Reparo"
+    imageFile = Image.open('images/cards/reparo.jpg')
+    description = "Choose one: Gain 2 Coins; or draw a card."
+
+    def __init__(self):
+        super().__init__()
+        self.cost = 3
+
+    def use(self, game):
+        None
+
+class Lumos(HogwartsCard):
+    name = "Lumos"
+    imageFile = Image.open('images/cards/lumos.jpg')
+    description = "All Heroes draw a card."
+
+    def __init__(self):
+        super().__init__()
+        self.cost = 4
+
+    def use(self, game):
+        for i in game.players:
+            i.draw_card()
 
 class InvisibilityCloak(HogwartsCard):
     name = "Invisibility Cloak"
@@ -50,10 +79,70 @@ class InvisibilityCloak(HogwartsCard):
         super().__init__()
         self.cost = 0
 
-    def use(self, player):
-        if player.can_get_coins:
-            player.give_coin(1)
-        player.invCloak = False
+    def use(self, game):
+        if game.ap.can_get_coins:
+            game.ap.give_coin(1)
+        game.ap.invCloak = False
+
+class SortingHat(HogwartsCard):
+    name = "Sorting Hat"
+    imageFile = Image.open('images/cards/sorting hat.jpg')
+    description = "Gain 2. You may put Allies you acquire on top of your deck instead of in your discard pile."
+
+    def __init__(self):
+        super().__init__()
+        self.cost = 4
+
+    def use(self, game):
+        if game.ap.can_get_coins:
+            game.ap.give_coin(2)
+
+class Hagrid(HogwartsCard):
+    name = "Rubeus Hagrid"
+    imageFile = Image.open('images/cards/hagrid.jpg')
+    description = "Gain 1 Zip-zap.  ALL Heroes gain 1 Heart."
+
+    def __init__(self):
+        super().__init__()
+        self.cost = 4
+
+    def use(self, game):
+        if game.ap.can_get_zips:
+            game.ap.give_zip(1)
+        for i in game.players:
+            if i.can_heal:
+                i.heal(1)
+
+class Dittany(HogwartsCard):
+    name = "Essence of Dittany"
+    imageFile = Image.open('images/cards/essance of dittany.jpg')
+    description = "Any one Hero gains 2 Hearts."
+
+    def __init__(self):
+        super().__init__()
+        self.cost = 2
+
+    def use(self, game):
+        choice = gui.PU_Dittany(game.root)
+        selection = choice.show()
+        if selection == 'lose hearts':
+            game.ap.damage(2)
+
+class QuidditchGear(HogwartsCard):
+    name = "Quidditch Gear"
+    imageFile = Image.open('images/cards/quidditch gear.jpg')
+    description = "Gain 1 Zip-zap and 1 Heart."
+
+    def __init__(self):
+        super().__init__()
+        self.cost = 3
+
+    def use(self, game):
+        if game.ap.can_get_zips:
+            game.ap.give_zip(1)
+        if game.ap.can_heal:
+            game.ap.heal(1)
+
 
 
 class VillainCard:
@@ -82,6 +171,8 @@ class CrabbeAndGoyle(VillainCard):
         # Need to do this for all players???
 
 
+
+
 class DarkArtsCard:
     def __init__(self):
         None
@@ -108,3 +199,26 @@ class Flipendo(DarkArtsCard):
     def use(self, game):
         game.ap.damage(1)
 
+class Hwmnbn(DarkArtsCard):
+    name = "He-Who-Must-Not-Be-Named"
+    imageFile = Image.open('images/dark arts/hewhomustnotbenamed.png')
+    description = "Add 1 to Location."
+
+    def __init__(self):
+        None
+
+    def use(self, game):
+        None
+
+class Petrification(DarkArtsCard):
+    name = "Petrification"
+    imageFile = Image.open('images/dark arts/petrification.png')
+    description = "ALL Heroes lose 1 Heart and cannot draw extra cards this turn."
+
+    def __init__(self):
+        None
+
+    def use(self, game):
+        for p in game.players:
+            p.can_draw_cards = False
+            p.damage(1)

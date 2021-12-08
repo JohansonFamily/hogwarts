@@ -189,7 +189,7 @@ class ImgBG:
         imgResized = imgRaw.resize((170, 110), Image.ANTIALIAS)
         self.vil = ImageTk.PhotoImage(imgResized)
 
-        imgRaw = Image.open('../images/cards/DarkArtsCardback.jpeg')
+        imgRaw = Image.open('../images/dark arts/DarkArtsCardback.jpeg')
         imgResized = imgRaw.resize((120, 110), Image.ANTIALIAS)
         self.da = ImageTk.PhotoImage(imgResized)
 
