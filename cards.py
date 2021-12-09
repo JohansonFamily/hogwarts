@@ -56,7 +56,8 @@ class Reparo(HogwartsCard):
         self.cost = 3
 
     def use(self, game):
-        None
+        choice = gui.PU_Reparo(game)
+        choice.show()
 
 class Lumos(HogwartsCard):
     name = "Lumos"
@@ -218,5 +219,5 @@ class Petrification(DarkArtsCard):
 
     def use(self, game):
         for p in game.players:
-            # p.can_draw_cards = False
+            p.can_draw_cards = False
             p.damage(1)

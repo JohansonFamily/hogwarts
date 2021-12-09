@@ -203,7 +203,7 @@ class Header:
 
     def nextTurn(self):
         # change person's turn
-        self.game.dark_arts_is_done = False
+        self.game.gb.darkArts.end_turn()
         self.game.ap.end_turn()
         self.game.ap = self.game.players[(self.game.players.index(self.game.ap) + 1) % len(self.game.players)]
         self.game.gb.activePlayer.loadContent()
@@ -231,6 +231,7 @@ class DarkArts:
         self.frame = frame
         self.game = game
         self.draw = self.game.darkArtsDeck
+        self.hand = []
         self.discard = []
 
     def loadContent(self):
@@ -269,6 +270,9 @@ class DarkArts:
             self.game.gb.playerList.loadContent()
             self.game.gb.activePlayer.loadContent()
 
+    def end_turn(self):
+        self.game.dark_arts_is_done = False
+
 
 class CardStore:
 
@@ -282,19 +286,24 @@ class CardStore:
         # layout cards
         for i in range(0, 6):
             # Pull the image file from the card object, resize it to what we want, then use a button to display
-            if len(deck)<i:
+            if len(deck)<i+1:
                 imgRaw = Image.open('images/FrameRoundedCorners.jpeg')
+                imgResized = imgRaw.resize((90, 120), Image.ANTIALIAS)
+                imgProcessed = ImageTk.PhotoImage(imgResized)
+                img = tk.Button(self.frame, image=imgProcessed, bd=0)
+                img.image = imgProcessed
+
             else:
                 imgRaw = deck[i].imageFile
-            imgResized = imgRaw.resize((90, 120), Image.ANTIALIAS)
-            imgProcessed = ImageTk.PhotoImage(imgResized)
-            img = tk.Button(self.frame, image=imgProcessed, bd=0,
-                            #                       focuscolor='systemWindowBackgroundColor', activebackground='systemWindowBackgroundColor',
+                imgResized = imgRaw.resize((90, 120), Image.ANTIALIAS)
+                imgProcessed = ImageTk.PhotoImage(imgResized)
+                img = tk.Button(self.frame, image=imgProcessed, bd=0,
                             command=lambda i=i: self.buy_card(deck[i]))
-            img.image = imgProcessed
+                img.image = imgProcessed
+                img.bind("<Enter>", lambda event, i=imgRaw: self.show_card(event, i))
+                img.bind("<Leave>", self.hide_card)
+
             img.grid(row=i // 2, column=i % 2, padx=5, pady=5)
-            img.bind("<Enter>", lambda event, i=imgRaw: self.show_card(event, i))
-            img.bind("<Leave>", self.hide_card)
 
     def show_card(self, e, img):
         imgRaw = img
@@ -382,6 +391,10 @@ class PlayerList:
         for i in range(len(self.game.players)):
             for widget in self.lblFrame[i].winfo_children():
                 widget.destroy()
+            if self.game.players[i] == self.game.ap:
+                self.lblFrame[i].configure(bg='blue')
+            else:
+                self.lblFrame[i].configure(bg='')
             lblLife = tk.Label(self.lblFrame[i], text="Health:  " + str(self.game.players[i].life))
             lblLife.grid(row=0, padx=10, pady=(5, 0), sticky='w')
             lblCoins = tk.Label(self.lblFrame[i], text="Coins:  " + str(self.game.players[i].coins))
@@ -416,6 +429,8 @@ class PlayerList:
                 img = tk.Label(frmCards, image=imgProcessed, bd=0)
                 img.image = imgProcessed
                 img.place(x=50 + 20 * k, y=0)
+
+
 
     def selectPlayer(self, e):
 
@@ -508,3 +523,43 @@ class PU_Dittany:
         p.heal(2)
         self.game.gb.playerList.loadContent()
         self.newWindow.destroy()
+
+class PU_Reparo:
+    def __init__(self, game):
+        self.game = game
+
+    def show(self):
+
+        # Toplevel object which will
+        # be treated as a new window
+        self.newWindow = tk.Toplevel(self.game.root)
+
+        # sets the title of the
+        # Toplevel widget
+        self.newWindow.title("Choose")
+
+        # sets the geometry of toplevel
+        self.newWindow.geometry("300x300+600+500")
+        self.newWindow.grid_columnconfigure(0, weight=1)
+        self.newWindow.grid_columnconfigure(1, weight=1)
+
+        lbl = tk.Label(self.newWindow, text="Choose one: Gain 2 Coins; or draw a card.", wraplength=260,
+                       padx=20,pady=20)
+        lbl.grid(row=0, columnspan=2)
+        btn1 = tk.Button(self.newWindow, text='2 Coins', command=lambda: self.coins())
+        btn1.grid(row=1, column=0)
+        btn2 = tk.Button(self.newWindow, text='Draw a card', command=lambda: self.card())
+        btn2.grid(row=1, column=1)
+
+    def coins(self):
+        self.game.ap.give_coin(2)
+        self.game.gb.playerList.loadContent()
+        self.game.gb.activePlayer.loadContent()
+        self.newWindow.destroy()
+
+    def card(self):
+        self.game.ap.draw_card()
+        self.game.gb.playerList.loadContent()
+        self.game.gb.activePlayer.loadContent()
+        self.newWindow.destroy()
+

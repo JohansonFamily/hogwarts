@@ -49,8 +49,9 @@ class Game:
         self.cardDeck = self.getCardDeck()
 
         self.villainDeck = self.getVillianDeck()
-        self.darkArtsDeck = self.getDarkArtsDeck()
         self.dark_arts_is_done = False
+        self.darkArtsDeck = self.getDarkArtsDeck()
+
         # self.locations = Locations()
         # self.darkArts = DarkArts()
 
@@ -71,7 +72,7 @@ class Game:
         # Set up cards available in the store
         cardDeck = []
 
-        self.addToDeck(cardDeck,cards.Reparo(),1)
+        self.addToDeck(cardDeck,cards.Reparo(),100)
         self.addToDeck(cardDeck,cards.Incendio(),1)
         self.addToDeck(cardDeck,cards.SortingHat(),1)
         self.addToDeck(cardDeck,cards.Lumos(),1)
@@ -102,7 +103,6 @@ class Game:
             cardDeck.append(cards.Petrification())
             cardDeck.append(cards.Flipendo())
             cardDeck.append(cards.Hwmnbn())
-
 
         random.shuffle(cardDeck)
 
