@@ -98,6 +98,10 @@ class Player:
 
         self.coins = 0
         self.zips = 0
+        self.can_draw_cards = True
+        self.can_heal = True
+        self.can_get_zips = True
+        self.can_get_coins = True
         self.hand.clear()
         for i in range(0,5):
             self.draw_card()
