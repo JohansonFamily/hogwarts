@@ -58,20 +58,20 @@ class StartingScreen:
         ## CHECKBOXES ##
         for i in range(len(self.players)):
             self.arrayPlayerSelection.append(tk.IntVar())
-            ckbx = tk.Checkbutton(self.start_top, text=self.players[i].name, padx = 20, pady=0,
-                                        variable=self.arrayPlayerSelection[i], command=lambda i=i: self.showPlayerPics(i))
-            ckbx.grid(column=1,row=i+3,sticky='W')
+            ckbx = tk.Checkbutton(self.start_top, text=self.players[i].name, padx=20, pady=0,
+                                  variable=self.arrayPlayerSelection[i], command=lambda i=i: self.showPlayerPics(i))
+            ckbx.grid(column=1, row=i + 3, sticky='W')
 
         ## GAME SELECTION ##
         frame_game_selection = tk.Frame(self.start_top)
         frame_game_selection.grid(columnspan=3, row=8)
         for i in range(len(self.gameOptions)):
-            tk.Radiobutton(frame_game_selection, text=self.gameOptions[i], variable=self.gameSelection, value=i + 1)\
+            tk.Radiobutton(frame_game_selection, text=self.gameOptions[i], variable=self.gameSelection, value=i + 1) \
                 .pack(side='left')
 
         ## START and QUIT ##
         tk.Button(self.start_top, text="Start Game", command=lambda: self.startGame()).grid(columnspan=3,
-                                                                                         row=9, pady=(30, 5))
+                                                                                            row=9, pady=(30, 5))
         self.root.bind('<Return>', self.startEnter)
         tk.Button(self.start_top, text="Quit", command=self.root.quit).grid(columnspan=3, row=10, column=0)
 
@@ -101,13 +101,13 @@ class StartingScreen:
 
             # Set defaults
             self.arrayPlayerSelection[i].set(1)
-            #self.start_bottom.grid_columnconfigure(i+1, weight=1)
-            self.arrayImageList[i].grid(row=0, column=i+1, pady=20)
+            # self.start_bottom.grid_columnconfigure(i+1, weight=1)
+            self.arrayImageList[i].grid(row=0, column=i + 1, pady=20)
 
     def showPlayerPics(self, col):
         # Use this if you want a consistent order
         if self.arrayPlayerSelection[col].get() == 1:
-            self.arrayImageList[col].grid(row=0, column=col+1)
+            self.arrayImageList[col].grid(row=0, column=col + 1)
         else:
             self.arrayImageList[col].grid_remove()
 
@@ -126,20 +126,18 @@ class StartingScreen:
             if self.arrayPlayerSelection[i].get() == 0:
                 del self.players[i]
 
-        game.startGame(self.root, self.gameOptions[self.gameSelection.get()-1], self.players)
+        game.startGame(self.root, self.gameOptions[self.gameSelection.get() - 1], self.players)
 
 
 class GameBoard:
-
     WIDTH = 1500
     HEIGHT = 1000
 
     def __init__(self, game):
-
-        self.root = game.root
+        self.game = game
 
         # establish parentFrame that will hold all gui elements
-        self.parentFrame = tk.Frame(self.root, width=self.WIDTH, height=self.HEIGHT)
+        self.parentFrame = tk.Frame(self.game.root, width=self.WIDTH, height=self.HEIGHT)
         self.parentFrame.grid_propagate(0)
 
         # Create frames for each section
@@ -152,14 +150,13 @@ class GameBoard:
         self.activePlayerFrame = tk.LabelFrame(self.parentFrame, text="Active Player")
 
         # Create objects for each section and pass in frame and appropriate data
-        self.header = Header(self.headerFrame, game)
+        self.header = Header(self.headerFrame, self.game)
         self.location = Location(self.locationFrame)
-        self.darkArts = DarkArts(self.darkArtsFrame, game)
-        self.cardStore = CardStore(self.cardStoreFrame, game)
-        self.villains = Villains(self.villainsFrame, game)
-        self.playerList = PlayerList(self.playerListFrame, game)
-        self.activePlayer = ActivePlayer(self.activePlayerFrame, game)
-
+        self.darkArts = DarkArts(self.darkArtsFrame, self.game)
+        self.cardStore = CardStore(self.cardStoreFrame, self.game)
+        self.villains = Villains(self.villainsFrame, self.game)
+        self.playerList = PlayerList(self.playerListFrame, self.game)
+        self.activePlayer = ActivePlayer(self.activePlayerFrame, self.game)
 
         # Place the objects on the game board
         self.setupGameBoard()
@@ -178,7 +175,7 @@ class GameBoard:
         self.parentFrame.grid_columnconfigure(4, weight=5)
 
         # place each frame into the right section
-        self.headerFrame.grid(row=0,columnspan=5, padx=10, sticky="EW")
+        self.headerFrame.grid(row=0, columnspan=5, padx=10, sticky="EW")
         self.locationFrame.grid(row=1, column=0, padx=10, sticky='NSEW')
         self.darkArtsFrame.grid(row=1, column=1, columnspan=2, padx=10, sticky='NSEW')
         self.villainsFrame.grid(row=2, columnspan=3, padx=10, sticky='NSEW')
@@ -187,18 +184,16 @@ class GameBoard:
         self.activePlayerFrame.grid(row=3, columnspan=5, padx=10, pady=10, sticky='NSEW')
 
 
-
-
 class Header:
 
     # This is for any admin function.  I am thinking save game or next turn???
-    def __init__(self,frame,game):
+    def __init__(self, frame, game):
         self.frame = frame
         self.game = game
         self.frame.grid_columnconfigure(0, weight=1)
         self.btn = tk.Button(self.frame, text='Next Turn', command=lambda: self.nextTurn())
         self.lbl = tk.Label(self.frame, text="Header information to go here.")
-        self.btn.grid(row=0,column=0, sticky='e')
+        self.btn.grid(row=0, column=0, sticky='e')
         self.game.root.bind('<Return>', self.enterNext)
 
     def enterNext(self, e):
@@ -248,12 +243,11 @@ class DarkArts:
         imgLocation.image = imgProcessed
         imgLocation.grid(row=0, column=0, padx=10, pady=10)
 
-
         # discard pile
         if len(self.discard) == 0:
             imgFile = Image.open('images/FrameRoundedCorners.jpeg')
         else:
-            imgFile = self.discard[len(self.discard)-1].imageFile
+            imgFile = self.discard[len(self.discard) - 1].imageFile
 
         imgResized = imgFile.resize((140, 140), Image.ANTIALIAS)
         imgProcessed = ImageTk.PhotoImage(imgResized)
@@ -286,30 +280,32 @@ class CardStore:
         deck = self.game.cardDeck
 
         # layout cards
-        for i in range(0,6):
+        for i in range(0, 6):
             # Pull the image file from the card object, resize it to what we want, then use a button to display
-            imgRaw = deck[i].imageFile
+            if len(deck)<i:
+                imgRaw = Image.open('images/FrameRoundedCorners.jpeg')
+            else:
+                imgRaw = deck[i].imageFile
             imgResized = imgRaw.resize((90, 120), Image.ANTIALIAS)
             imgProcessed = ImageTk.PhotoImage(imgResized)
-            img=tk.Button(self.frame, image=imgProcessed, bd=0,
-#                       focuscolor='systemWindowBackgroundColor', activebackground='systemWindowBackgroundColor',
-                       command=lambda i=i: self.buy_card(deck[i]))
-            img.image=imgProcessed
-            img.grid(row=i//2,column=i%2,padx=5,pady=5)
+            img = tk.Button(self.frame, image=imgProcessed, bd=0,
+                            #                       focuscolor='systemWindowBackgroundColor', activebackground='systemWindowBackgroundColor',
+                            command=lambda i=i: self.buy_card(deck[i]))
+            img.image = imgProcessed
+            img.grid(row=i // 2, column=i % 2, padx=5, pady=5)
             img.bind("<Enter>", lambda event, i=imgRaw: self.show_card(event, i))
             img.bind("<Leave>", self.hide_card)
 
     def show_card(self, e, img):
         imgRaw = img
-        imgResized = imgRaw.resize((300,400), Image.ANTIALIAS)
+        imgResized = imgRaw.resize((300, 400), Image.ANTIALIAS)
         imgProcessed = ImageTk.PhotoImage(imgResized)
-        self.imgLabel=tk.Label(self.game.root, image=imgProcessed)
+        self.imgLabel = tk.Label(self.game.root, image=imgProcessed)
         self.imgLabel.image = imgProcessed
         self.imgLabel.grid(row=0, column=0, pady=10, sticky='s')
 
     def hide_card(self, e):
         self.imgLabel.destroy()
-
 
     # This is what is called if someone clicks on the card
     def buy_card(self, card):
@@ -382,29 +378,28 @@ class PlayerList:
         zipResized = zipRaw.resize((15, 15), Image.ANTIALIAS)
         zipProcessed = ImageTk.PhotoImage(zipResized)
 
-
         self.frame.grid_columnconfigure(0, weight=2)
         for i in range(len(self.game.players)):
             for widget in self.lblFrame[i].winfo_children():
                 widget.destroy()
-            lblLife = tk.Label(self.lblFrame[i], text="Health:  "+str(self.game.players[i].life))
-            lblLife.grid(row=0, padx=10, pady=(5,0), sticky='w')
-            lblCoins = tk.Label(self.lblFrame[i], text="Coins:  "+str(self.game.players[i].coins))
+            lblLife = tk.Label(self.lblFrame[i], text="Health:  " + str(self.game.players[i].life))
+            lblLife.grid(row=0, padx=10, pady=(5, 0), sticky='w')
+            lblCoins = tk.Label(self.lblFrame[i], text="Coins:  " + str(self.game.players[i].coins))
             lblCoins.grid(row=1, padx=10, sticky='w')
-            lblZips = tk.Label(self.lblFrame[i], text="Zip-zaps: "+str(self.game.players[i].zips))
+            lblZips = tk.Label(self.lblFrame[i], text="Zip-zaps: " + str(self.game.players[i].zips))
             lblZips.grid(row=2, padx=10, sticky='w')
             for j in range(self.game.players[i].life):
                 heart = tk.Label(self.lblFrame[i], image=heartProcessed)
                 heart.image = heartProcessed
-                heart.grid(row=0, column=j+1)
-            for j in range(min(10,self.game.players[i].coins)):
+                heart.grid(row=0, column=j + 1)
+            for j in range(min(10, self.game.players[i].coins)):
                 coins = tk.Label(self.lblFrame[i], image=coinProcessed)
                 coins.image = coinProcessed
-                coins.grid(row=1, column=j+1)
-            for j in range(min(10,self.game.players[i].zips)):
+                coins.grid(row=1, column=j + 1)
+            for j in range(min(10, self.game.players[i].zips)):
                 zip = tk.Label(self.lblFrame[i], image=zipProcessed)
                 zip.image = zipProcessed
-                zip.grid(row=2, column=j+1)
+                zip.grid(row=2, column=j + 1)
             frmCards = tk.Frame(self.lblFrame[i], width=300, height=80)
             frmCards.grid(row=0, rowspan=3, column=12)
             frmCards.grid_columnconfigure(0, weight=1)
@@ -412,7 +407,7 @@ class PlayerList:
             frmCards.grid_propagate(0)
 
             lblCards = tk.Label(frmCards, text="  Cards in Hand: ", padx=5)
-            #lblCards.pack()
+            # lblCards.pack()
             lblCards.place()
             for k in range(len(self.game.players[i].hand)):
                 imgRaw = self.game.players[i].hand[k].imageFile
@@ -420,7 +415,7 @@ class PlayerList:
                 imgProcessed = ImageTk.PhotoImage(imgResized)
                 img = tk.Label(frmCards, image=imgProcessed, bd=0)
                 img.image = imgProcessed
-                img.place(x=50+20*k, y=0)
+                img.place(x=50 + 20 * k, y=0)
 
     def selectPlayer(self, e):
 
@@ -445,7 +440,7 @@ class ActivePlayer:
             widget.destroy()
         self.frame.config(text=self.game.ap.name)
         b1 = Button(self.frame, text="Hurt Player", width=200, height=100, bg='red',
-             fg="white", command=lambda: self.damage(2))
+                    fg="white", command=lambda: self.damage(2))
         b1.grid(row=0)
         b2 = Button(self.frame, text="Heal Player", width=200, height=100,
                     bg='green', fg='white', command=lambda: self.heal(2))
@@ -462,7 +457,7 @@ class ActivePlayer:
             img = tk.Button(self.frame, image=imgProcessed, bd=0,
                             command=lambda i=i: self.use_card(self.game.ap.hand[i]))
             img.image = imgProcessed
-            img.grid(row = 2, column=1+i)
+            img.grid(row=2, column=1 + i)
 
     def use_card(self, card):
         if self.game.dark_arts_is_done:
@@ -474,41 +469,42 @@ class ActivePlayer:
         self.game.ap.damage(nbr)
         self.game.gb.playerList.loadContent()
 
-    def heal(self,nbr):
+    def heal(self, nbr):
         self.game.ap.heal(nbr)
         self.game.gb.playerList.loadContent()
 
 
 class PU_Dittany:
-    def __init__(self, root):
-        self.root = root
+    def __init__(self, game):
+        self.game = game
 
     def show(self):
 
         # Toplevel object which will
         # be treated as a new window
-        newWindow = tk.Toplevel(self.root)
+        self.newWindow = tk.Toplevel(self.game.root)
 
         # sets the title of the
         # Toplevel widget
-        newWindow.title("Choose")
+        self.newWindow.title("Choose")
 
         # sets the geometry of toplevel
-        newWindow.geometry("300x300+600+500")
-        newWindow.grid_columnconfigure(0, weight=1)
-        newWindow.grid_columnconfigure(1, weight=1)
+        self.newWindow.geometry("300x300+600+500")
+        self.newWindow.grid_columnconfigure(0, weight=1)
+        self.newWindow.grid_columnconfigure(1, weight=1)
 
-        lbl = tk.Label(newWindow, text="Would you prefer to lose 2 hearts or discard a card?", wraplength=260, padx=20,
+        lbl = tk.Label(self.newWindow, text="Any one Hero gains 2 Hearts.  Which Hero do you choose?", wraplength=260,
+                       padx=20,
                        pady=20)
         lbl.grid(row=0, columnspan=2)
-        b1 = tk.Button(newWindow, text="Lose 2 hearts", command=lambda: self.loseHearts())
-        b1.grid(row=1, column=0)
-        b2 = tk.Button(newWindow, text="Discard a card", command=lambda: self.discard())
-        b2.grid(row=1, column=1)
+        i = 0
+        for p in self.game.players:
+            if not p.stunned:
+                i = i + 1
+                btn = tk.Button(self.newWindow, text=p.name, command=lambda p=p: self.use(p))
+                btn.grid(row=i, columnspan=2)
 
-    def loseHearts(self):
-        return 'lose hearts'
-
-    def discard(self):
-        return 'discard'
-
+    def use(self, p):
+        p.heal(2)
+        self.game.gb.playerList.loadContent()
+        self.newWindow.destroy()

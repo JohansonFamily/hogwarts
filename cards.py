@@ -123,10 +123,8 @@ class Dittany(HogwartsCard):
         self.cost = 2
 
     def use(self, game):
-        choice = gui.PU_Dittany(game.root)
-        selection = choice.show()
-        if selection == 'lose hearts':
-            game.ap.damage(2)
+        choice = gui.PU_Dittany(game)
+        choice.show()
 
 class QuidditchGear(HogwartsCard):
     name = "Quidditch Gear"
@@ -220,5 +218,5 @@ class Petrification(DarkArtsCard):
 
     def use(self, game):
         for p in game.players:
-            p.can_draw_cards = False
+            # p.can_draw_cards = False
             p.damage(1)

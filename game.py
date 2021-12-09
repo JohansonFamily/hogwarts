@@ -71,13 +71,13 @@ class Game:
         # Set up cards available in the store
         cardDeck = []
 
-        self.addToDeck(cardDeck,cards.Reparo(),4)
-        self.addToDeck(cardDeck,cards.Incendio(),3)
-        self.addToDeck(cardDeck,cards.SortingHat(),4)
-        self.addToDeck(cardDeck,cards.Lumos(),3)
-        self.addToDeck(cardDeck,cards.QuidditchGear(),4)
-        self.addToDeck(cardDeck,cards.Hagrid(),4)
-        self.addToDeck(cardDeck,cards.Dittany(),3)
+        self.addToDeck(cardDeck,cards.Reparo(),1)
+        self.addToDeck(cardDeck,cards.Incendio(),1)
+        self.addToDeck(cardDeck,cards.SortingHat(),1)
+        self.addToDeck(cardDeck,cards.Lumos(),1)
+        self.addToDeck(cardDeck,cards.QuidditchGear(),1)
+        self.addToDeck(cardDeck,cards.Hagrid(),1)
+        self.addToDeck(cardDeck,cards.Dittany(),1)
 
         random.shuffle(cardDeck)
         return cardDeck
