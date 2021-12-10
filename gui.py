@@ -1,10 +1,9 @@
 import tkinter as tk
-from tkmacosx import Button
+# from tkmacosx import Button
 from PIL import ImageTk, Image
 import game
 import random
-import tkinter.messagebox as messagebox
-
+import tkinter.ttk as ttk
 
 class StartingScreen:
     ### CONSTANTS ###
@@ -135,6 +134,43 @@ class GameBoard:
 
     def __init__(self, game):
         self.game = game
+        '''
+        self.style = ttk.Style()
+
+        self.style.theme_create('activeStyle', parent='alt',
+                           settings={'TLabelframe': {
+                               'configure': {
+                                   'background': '#ececec',
+                                   'relief': 'solid',  # has to be 'solid' to color
+                                   'bordercolor': 'red',
+                                   'borderwidth': 2
+                               }
+                           },
+                               'TLabelframe.Label': {
+                                   'configure': {
+                                       'foreground': 'red',
+                                       'background': '#ececec'
+                                   }
+                               }
+                           })
+        self.style.theme_create('defaultStyle', parent='alt',
+                           settings={'TLabelframe': {
+                               'configure': {
+                                   'background': '#ececec',
+                                   'bordercolor': 'gray',
+                                   'relief': 'groove',
+                                   'borderwidth': 1
+                               }
+                           },
+                               'TLabelframe.Label': {
+                                   'configure': {
+                                       'foreground': 'black',
+                                       'background': '#ececec'
+                                   }
+                               }
+                           })
+        self.style.theme_use('defaultStyle')
+        '''
 
         # establish parentFrame that will hold all gui elements
         self.parentFrame = tk.Frame(self.game.root, width=self.WIDTH, height=self.HEIGHT)
@@ -147,7 +183,7 @@ class GameBoard:
         self.cardStoreFrame = tk.LabelFrame(self.parentFrame, text="Card Store")
         self.villainsFrame = tk.Frame(self.parentFrame)
         self.playerListFrame = tk.Frame(self.parentFrame)
-        self.activePlayerFrame = tk.LabelFrame(self.parentFrame, text="Active Player")
+        self.activePlayerFrame = ttk.LabelFrame(self.parentFrame, text="Active Player")
 
         # Create objects for each section and pass in frame and appropriate data
         self.header = Header(self.headerFrame, self.game)
@@ -183,6 +219,12 @@ class GameBoard:
         self.playerListFrame.grid(row=1, rowspan=2, column=4, padx=10, sticky='NSEW')
         self.activePlayerFrame.grid(row=3, columnspan=5, padx=10, pady=10, sticky='NSEW')
 
+    def next_turn(self):
+        self.game.dark_arts_is_done = False
+        self.game.ap.end_turn()
+        self.game.ap = self.game.players[(self.game.players.index(self.game.ap) + 1) % len(self.game.players)]
+        self.game.load_data()
+
 
 class Header:
 
@@ -199,15 +241,7 @@ class Header:
     def enterNext(self, e):
         # This is the function from the enter key to change turns
         if self.game.ap.hand == []:
-            self.nextTurn()
-
-    def nextTurn(self):
-        # change person's turn
-        self.game.gb.darkArts.end_turn()
-        self.game.ap.end_turn()
-        self.game.ap = self.game.players[(self.game.players.index(self.game.ap) + 1) % len(self.game.players)]
-        self.game.gb.activePlayer.loadContent()
-        self.game.gb.playerList.loadContent()
+            self.game.gb.next_turn()
 
 
 class Location:
@@ -235,6 +269,8 @@ class DarkArts:
         self.discard = []
 
     def loadContent(self):
+        for widget in self.frame.winfo_children():
+            widget.destroy()
         imgRaw = Image.open('images/dark arts/DarkArtsCardback.jpeg')
         imgResized = imgRaw.resize((140, 140), Image.ANTIALIAS)
         imgProcessed = ImageTk.PhotoImage(imgResized)
@@ -243,6 +279,11 @@ class DarkArts:
         imgLocation = tk.Button(self.frame, image=imgProcessed, command=lambda: self.draw_card(self.game))
         imgLocation.image = imgProcessed
         imgLocation.grid(row=0, column=0, padx=10, pady=10)
+
+        if not self.game.dark_arts_is_done or len(self.game.ap.hand)==0:
+            imgLocation.config(highlightbackground='red', borderwidth=2)
+        else:
+            imgLocation.config(highlightbackground='#ececec', borderwidth=0)
 
         # discard pile
         if len(self.discard) == 0:
@@ -263,15 +304,24 @@ class DarkArts:
                 self.discard.clear()
                 random.shuffle(self.draw)
             self.discard.append(self.draw[0])
+            self.show_card(self.draw[0])
             self.draw[0].use(game)
             self.draw.remove(self.draw[0])
             self.game.dark_arts_is_done = True
-            self.loadContent()
-            self.game.gb.playerList.loadContent()
-            self.game.gb.activePlayer.loadContent()
+            self.game.load_data()
 
-    def end_turn(self):
-        self.game.dark_arts_is_done = False
+        elif len(self.game.ap.hand)==0:
+            self.game.gb.next_turn()
+            self.draw_card(game)
+
+    def show_card(self, card):
+        imgFile = card.imageFile
+        imgResized = imgFile.resize((400, 400), Image.ANTIALIAS)
+        imgProcessed = ImageTk.PhotoImage(imgResized)
+        lbl = tk.Label(image=imgProcessed, highlightbackground='black', borderwidth=2)
+        lbl.image = imgProcessed
+        lbl.place(x=500,y=300,anchor='nw')
+        lbl.after(3000, lbl.destroy)
 
 
 class CardStore:
@@ -282,7 +332,8 @@ class CardStore:
 
     def loadContent(self):
         deck = self.game.cardDeck
-
+        for widget in self.frame.winfo_children():
+            widget.destroy()
         # layout cards
         for i in range(0, 6):
             # Pull the image file from the card object, resize it to what we want, then use a button to display
@@ -290,18 +341,23 @@ class CardStore:
                 imgRaw = Image.open('images/FrameRoundedCorners.jpeg')
                 imgResized = imgRaw.resize((90, 120), Image.ANTIALIAS)
                 imgProcessed = ImageTk.PhotoImage(imgResized)
-                img = tk.Button(self.frame, image=imgProcessed, bd=0)
+                img = tk.Button(self.frame, image=imgProcessed)
                 img.image = imgProcessed
 
             else:
                 imgRaw = deck[i].imageFile
                 imgResized = imgRaw.resize((90, 120), Image.ANTIALIAS)
                 imgProcessed = ImageTk.PhotoImage(imgResized)
-                img = tk.Button(self.frame, image=imgProcessed, bd=0,
+                img = tk.Button(self.frame, image=imgProcessed,
                             command=lambda i=i: self.buy_card(deck[i]))
                 img.image = imgProcessed
                 img.bind("<Enter>", lambda event, i=imgRaw: self.show_card(event, i))
-                img.bind("<Leave>", self.hide_card)
+                img.bind("<Leave>", lambda event: self.hide_card(event))
+
+            if self.game.ap.coins >= deck[i].cost:
+                img.config(highlightbackground='red', borderwidth=2)
+            else:
+                img.config(highlightbackground='#ececec', borderwidth=0)
 
             img.grid(row=i // 2, column=i % 2, padx=5, pady=5)
 
@@ -319,9 +375,8 @@ class CardStore:
     # This is what is called if someone clicks on the card
     def buy_card(self, card):
         self.game.ap.buy_card(card, self.game.cardDeck)
-        self.loadContent()
-        self.game.gb.playerList.loadContent()
-        self.game.gb.activePlayer.loadContent()
+        self.imgLabel.destroy()
+        self.game.load_data()
 
 
 class Villains:
@@ -392,9 +447,11 @@ class PlayerList:
             for widget in self.lblFrame[i].winfo_children():
                 widget.destroy()
             if self.game.players[i] == self.game.ap:
-                self.lblFrame[i].configure(bg='blue')
+                self.lblFrame[i].configure(bg='#ececec')
+                self.lblFrame[i].configure(relief='solid')
             else:
-                self.lblFrame[i].configure(bg='')
+                self.lblFrame[i].configure(bg='#ececec')
+                self.lblFrame[i].configure(relief='groove')
             lblLife = tk.Label(self.lblFrame[i], text="Health:  " + str(self.game.players[i].life))
             lblLife.grid(row=0, padx=10, pady=(5, 0), sticky='w')
             lblCoins = tk.Label(self.lblFrame[i], text="Coins:  " + str(self.game.players[i].coins))
@@ -451,19 +508,10 @@ class ActivePlayer:
         self.game = game
 
     def loadContent(self):
+
         for widget in self.frame.winfo_children():
             widget.destroy()
         self.frame.config(text=self.game.ap.name)
-        b1 = Button(self.frame, text="Hurt Player", width=200, height=100, bg='red',
-                    fg="white", command=lambda: self.damage(2))
-        b1.grid(row=0)
-        b2 = Button(self.frame, text="Heal Player", width=200, height=100,
-                    bg='green', fg='white', command=lambda: self.heal(2))
-        b2.grid(row=1)
-
-        b3 = Button(self.frame, text="Popup", width=200, height=100,
-                    bg='blue', fg='white', command=lambda: self.game.gb.pu.popUpCard())
-        b3.grid(row=2, column=0)
 
         for i in range(len(self.game.ap.hand)):
             imgRaw = self.game.ap.hand[i].imageFile
@@ -477,8 +525,7 @@ class ActivePlayer:
     def use_card(self, card):
         if self.game.dark_arts_is_done:
             self.game.ap.play_card(card, self.game)
-            self.game.gb.playerList.loadContent()
-            self.game.gb.activePlayer.loadContent()
+            self.game.load_data()
 
     def damage(self, nbr):
         self.game.ap.damage(nbr)
